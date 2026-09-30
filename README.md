@@ -37,8 +37,8 @@ Risk Engine (Calibrated Probability → LOW / MEDIUM / HIGH + SHAP Explanations)
 | **0** | **Understand the Problem & Threat Modeling** | ✅ Completed | [Phase 0 Doc](docs/phase_0_problem_understanding.md) |
 | **1** | **Define the MVP** | ✅ Completed | [Phase 1 Doc](docs/phase_1_mvp_definition.md) & [MVP Pipeline](src/prediction/mvp_pipeline.py) |
 | **2** | **Research Approaches** | ✅ Completed | [Phase 2 Doc](docs/phase_2_research_approaches.md) & [Hybrid Engine](src/prediction/hybrid_engine.py) |
-| **3** | Acquire & Engineer Dataset | ⏳ Pending | PhishTank, URLhaus, Tranco reproducible pipeline |
-| **4** | Exploratory Data Analysis (EDA) | ⏳ Pending | Distributions, correlations, leakage checks |
+| **3** | **Acquire & Engineer Dataset + EDA** | ✅ Completed | [EDA Report](docs/phase_3_data_exploration.md) & [Notebook](notebooks/01_data_exploration.ipynb) |
+| **4** | Exploratory Data Analysis (EDA) / URL Parser | ⏳ Pending | URL parser & feature components |
 | **5** | URL Parsing Component | ⏳ Pending | Modular RFC-compliant parser with unit tests |
 | **6** | Feature Engineering | ⏳ Pending | Structural, character, lexical, entropy metrics |
 | **7** | Feature Extractor Implementation | ⏳ Pending | Skew-free reusable extractor with unit tests |

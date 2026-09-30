@@ -1,0 +1,187 @@
+{
+  "class_distribution": {
+    "total_records": 9450,
+    "phishing_count": 4990,
+    "phishing_pct": 52.8,
+    "legitimate_count": 4460,
+    "legitimate_pct": 47.2,
+    "imbalance_ratio": 1.119
+  },
+  "missing_values": {
+    "url": 0,
+    "label": 0,
+    "source": 0,
+    "collection_date": 0
+  },
+  "length_distributions": {
+    "url_length": {
+      "phishing": {
+        "min": 48.0,
+        "mean": 87.13,
+        "median": 86.0,
+        "std": 15.57,
+        "max": 133.0,
+        "p95": 113.0
+      },
+      "legitimate": {
+        "min": 15.0,
+        "mean": 49.27,
+        "median": 49.0,
+        "std": 13.69,
+        "max": 86.0,
+        "p95": 72.0
+      }
+    },
+    "domain_length": {
+      "phishing": {
+        "min": 9.0,
+        "mean": 28.7,
+        "median": 30.5,
+        "std": 12.61,
+        "max": 61.0,
+        "p95": 51.0
+      },
+      "legitimate": {
+        "min": 7.0,
+        "mean": 14.77,
+        "median": 15.0,
+        "std": 3.98,
+        "max": 27.0,
+        "p95": 21.0
+      }
+    },
+    "path_length": {
+      "phishing": {
+        "min": 7.0,
+        "mean": 20.79,
+        "median": 21.0,
+        "std": 9.78,
+        "max": 40.0,
+        "p95": 40.0
+      },
+      "legitimate": {
+        "min": 0.0,
+        "mean": 14.97,
+        "median": 14.0,
+        "std": 9.28,
+        "max": 30.0,
+        "p95": 30.0
+      }
+    }
+  },
+  "structural_distributions": {
+    "dot_count_mean": {
+      "phishing": 3.13,
+      "legitimate": 1.82
+    },
+    "hyphen_count_mean": {
+      "phishing": 1.64,
+      "legitimate": 0.5
+    },
+    "digit_count_mean": {
+      "phishing": 9.28,
+      "legitimate": 1.36
+    },
+    "subdomain_count_mean": {
+      "phishing": 1.96,
+      "legitimate": 0.76
+    },
+    "ip_host_prevalence_pct": {
+      "phishing": 19.56,
+      "legitimate": 0.0
+    },
+    "https_prevalence_pct": {
+      "phishing": 50.32,
+      "legitimate": 94.3
+    }
+  },
+  "data_leakage_and_domains": {
+    "exact_url_duplicates": 0,
+    "total_unique_domains": 3234,
+    "unique_phishing_domains": 3197,
+    "unique_legitimate_domains": 37,
+    "overlapping_domain_count": 0,
+    "overlapping_domains_sample": [],
+    "top_repeated_domains": {
+      "github.com": 143,
+      "adobe.com": 141,
+      "digitalocean.com": 141,
+      "dropbox.com": 140,
+      "apple.com": 137,
+      "wsj.com": 134,
+      "netflix.com": 132,
+      "nature.com": 132,
+      "python.org": 132,
+      "harvard.edu": 130
+    },
+    "leakage_risk_assessment": "CRITICAL: If train/test splitting is done randomly by URL instead of grouped by domain, models risk memorizing high-frequency domains rather than generalizing to unseen domains."
+  },
+  "keyword_signals": {
+    "login": {
+      "phishing_hits": 1318,
+      "phishing_rate_pct": 26.41,
+      "legitimate_hits": 0,
+      "legitimate_rate_pct": 0.0
+    },
+    "verify": {
+      "phishing_hits": 1465,
+      "phishing_rate_pct": 29.36,
+      "legitimate_hits": 0,
+      "legitimate_rate_pct": 0.0
+    },
+    "account": {
+      "phishing_hits": 1112,
+      "phishing_rate_pct": 22.28,
+      "legitimate_hits": 0,
+      "legitimate_rate_pct": 0.0
+    },
+    "security": {
+      "phishing_hits": 711,
+      "phishing_rate_pct": 14.25,
+      "legitimate_hits": 296,
+      "legitimate_rate_pct": 6.64
+    },
+    "update": {
+      "phishing_hits": 594,
+      "phishing_rate_pct": 11.9,
+      "legitimate_hits": 0,
+      "legitimate_rate_pct": 0.0
+    },
+    "password": {
+      "phishing_hits": 0,
+      "phishing_rate_pct": 0.0,
+      "legitimate_hits": 0,
+      "legitimate_rate_pct": 0.0
+    },
+    "bank": {
+      "phishing_hits": 1135,
+      "phishing_rate_pct": 22.75,
+      "legitimate_hits": 0,
+      "legitimate_rate_pct": 0.0
+    },
+    "payment": {
+      "phishing_hits": 0,
+      "phishing_rate_pct": 0.0,
+      "legitimate_hits": 0,
+      "legitimate_rate_pct": 0.0
+    },
+    "confirm": {
+      "phishing_hits": 1025,
+      "phishing_rate_pct": 20.54,
+      "legitimate_hits": 0,
+      "legitimate_rate_pct": 0.0
+    },
+    "wallet": {
+      "phishing_hits": 0,
+      "phishing_rate_pct": 0.0,
+      "legitimate_hits": 0,
+      "legitimate_rate_pct": 0.0
+    },
+    "signin": {
+      "phishing_hits": 189,
+      "phishing_rate_pct": 3.79,
+      "legitimate_hits": 0,
+      "legitimate_rate_pct": 0.0
+    }
+  }
+}
