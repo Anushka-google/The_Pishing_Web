@@ -90,23 +90,31 @@ class URLParser:
         hostname = parsed.hostname or ""
         hostname = hostname.lower()
 
-        # Check if hostname is raw IP address (IPv4 or IPv6)
+        # Check if hostname is raw IP address (IPv4 or IPv6) or contains IP
         is_ip = False
         if hostname:
             try:
                 ipaddress.ip_address(hostname)
                 is_ip = True
             except ValueError:
-                is_ip = False
+                if re.search(r"(?:^|\.)(?:\d{1,3}\.){3}\d{1,3}(?::|$)", hostname):
+                    is_ip = True
+                else:
+                    is_ip = False
 
-        # Extract registered domain, subdomain, and suffix using tldextract
-        if is_ip or not hostname:
-            domain = hostname
+        # Extract registered domain, subdomain, and suffix
+        ip_match = re.search(r"(?:\d{1,3}\.){3}\d{1,3}$", hostname)
+        if ip_match:
+            is_ip = True
+            domain = ip_match.group(0)
+            subdomain = hostname[:ip_match.start()].rstrip(".")
+            suffix = ""
+        elif not hostname:
+            domain = ""
             subdomain = ""
             suffix = ""
         else:
             ext = self._tld_extractor(hostname)
-            # Use top_domain_under_public_suffix or fallback
             domain = getattr(ext, "top_domain_under_public_suffix", None) or ext.registered_domain or hostname
             domain = domain.lower()
             subdomain = ext.subdomain.lower() if ext.subdomain else ""

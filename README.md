@@ -40,8 +40,8 @@ Risk Engine (Calibrated Probability → LOW / MEDIUM / HIGH + SHAP Explanations)
 | **3** | **Acquire & Engineer Dataset + EDA** | ✅ Completed | [EDA Report](docs/phase_3_data_exploration.md) & [Notebook](notebooks/01_data_exploration.ipynb) |
 | **4** | **Benchmark Detection Approaches** | ✅ Completed | [Benchmark Report](docs/approaches_comparison_benchmark.md) & [Notebook](notebooks/02_detection_approaches_benchmark.ipynb) |
 | **5** | **URL Parsing Component** | ✅ Completed | [URL Parser Spec](docs/phase_5_url_parsing.md) & [Parser Code](src/preprocessing/url_parser.py) |
-| **6** | Feature Engineering | ⏳ Pending | Structural, character, lexical, entropy metrics |
-| **7** | Feature Extractor Implementation | ⏳ Pending | Skew-free reusable extractor with unit tests |
+| **6** | **Feature Engineering** | ✅ Completed | [Feature Engineering Spec](docs/phase_6_feature_engineering.md) & 22 Engineered Signals |
+| **7** | **Feature Extractor Implementation** | ✅ Completed | [Feature Extractor](src/features/extractor.py) & [Dataset Matrix](src/features/build_features.py) |
 | **8** | Baseline ML Model | ⏳ Pending | Logistic Regression benchmark & metrics |
 | **9** | Model Experimentation | ⏳ Pending | Decision Tree, Random Forest, XGBoost comparison |
 | **10** | Class Imbalance Handling | ⏳ Pending | Class weights, sampling, and cost curves |
