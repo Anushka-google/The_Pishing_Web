@@ -51,9 +51,9 @@ Risk Engine (Calibrated Probability → LOW / MEDIUM / HIGH + SHAP Explanations)
 | **14** | **Production Inference Pipeline** | ✅ Completed | [Inference Spec](docs/phase_14_production_inference.md) & [Predict CLI](src/prediction/predict.py) |
 | **15** | **FastAPI REST Backend Service** | ✅ Completed | [API Routes](api/routes.py) & [API App](api/main.py) |
 | **16** | **Input Validation & Error Handling** | ✅ Completed | [Pydantic Schemas](api/schemas.py) & Whitelist Validation |
-| **17** | PostgreSQL Storage | ⏳ Pending | Schema, migrations, and prediction audit log |
-| **18** | React Frontend Dashboard | ⏳ Pending | Interactive URL analyzer & visualizer |
-| **19** | Security-Aware UI | ⏳ Pending | Risk indicators & actionable security guidance |
+| **17** | **Relational Storage (PostgreSQL & SQLite)** | ✅ Completed | [Database Spec](docs/phase_17_postgresql_storage.md) & [Repository](database/repository.py) |
+| **18** | **React Frontend Dashboard** | ✅ Completed | [Frontend Spec](docs/phase_18_19_react_frontend.md) & [Vite React App](frontend/src/App.jsx) |
+| **19** | **Security-Aware UI & Explainability** | ✅ Completed | [ResultCard](frontend/src/components/ResultCard.jsx) & [RiskExplanation](frontend/src/components/RiskExplanation.jsx) |
 | **20** | Testing Suite | ⏳ Pending | Unit, integration, and ML validation tests |
 | **21** | Docker Containerization | ⏳ Pending | Multi-container docker-compose setup |
 | **22** | MLflow Experiment Tracking | ⏳ Pending | Metric logging & artifact registry |

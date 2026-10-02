@@ -13,10 +13,15 @@ from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 
 from api.routes import router, get_predictor
+from database.connection import init_db
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    # Initialize database tables
+    print("Initializing Database schema (PostgreSQL / SQLite)...")
+    init_db()
+
     # Pre-warm model and SHAP explainer on startup
     print("Pre-warming Phishing Detection Engine & SHAP TreeExplainer...")
     predictor = get_predictor()
