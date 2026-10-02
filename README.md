@@ -55,7 +55,7 @@ Risk Engine (Calibrated Probability → LOW / MEDIUM / HIGH + SHAP Explanations)
 | **18** | **React Frontend Dashboard** | ✅ Completed | [Frontend Spec](docs/phase_18_19_react_frontend.md) & [Vite React App](frontend/src/App.jsx) |
 | **19** | **Security-Aware UI & Explainability** | ✅ Completed | [ResultCard](frontend/src/components/ResultCard.jsx) & [RiskExplanation](frontend/src/components/RiskExplanation.jsx) |
 | **20** | **Comprehensive Testing Suite (Unit, API, ML)** | ✅ Completed | [Test Spec](docs/phase_20_testing_harness.md) & 69 Passing Tests |
-| **21** | Docker Containerization | ⏳ Pending | Multi-container docker-compose setup |
+| **21** | **Docker Multi-Container Orchestration** | ✅ Completed | [Docker Spec](docs/phase_21_docker_containerization.md) & [docker-compose.yml](docker-compose.yml) |
 | **22** | MLflow Experiment Tracking | ⏳ Pending | Metric logging & artifact registry |
 | **23** | Model Versioning & Rollback | ⏳ Pending | Version management & deployment safety |
 | **24** | Structured Logging | ⏳ Pending | JSON audit logging & tracing |
