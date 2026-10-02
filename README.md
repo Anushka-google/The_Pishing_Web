@@ -45,12 +45,12 @@ Risk Engine (Calibrated Probability → LOW / MEDIUM / HIGH + SHAP Explanations)
 | **8** | **Baseline ML Model** | ✅ Completed | [Baseline Spec](docs/phase_8_baseline_model.md) & [Trainer](src/training/train_baseline.py) |
 | **9** | **Model Experimentation** | ✅ Completed | [Comparison Report](docs/phase_8_model_experimentation.md) & [Notebook](notebooks/03_model_experimentation.ipynb) |
 | **10** | Class Imbalance Handling | ⏳ Pending | Class weights, sampling, and cost curves |
-| **11** | **Leakage-Safe & Real-World Validation** | ✅ Completed | [Domain Grouping](src/training/leakage_safe_evaluation.py) & [Real-World Benchmark (URLhaus+Tranco)](docs/phase_11_real_world_validation.md) |
-| **12** | Threshold Optimization | ⏳ Pending | Multi-tier operating threshold calibration |
-| **13** | Model Explainability (SHAP) | ⏳ Pending | Global & local feature attribution |
-| **14** | Production Inference Pipeline | ⏳ Pending | Production prediction pipeline & artifact packaging |
-| **15** | FastAPI Backend Service | ⏳ Pending | `/predict`, `/health`, `/history`, `/stats` |
-| **16** | Input Validation & Error Handling | ⏳ Pending | Pydantic validation & resilience |
+| **11** | **Leakage-Safe & Real-World Validation** | ✅ Completed | [Domain Grouping](src/training/leakage_safe_evaluation.py), [Holdout Benchmark](docs/phase_11_real_world_validation.md) & [Validation Suite](docs/phase_11_rigorous_validation_suite.md) |
+| **12** | **Threshold Optimization & Calibration** | ✅ Completed | [Threshold Spec](docs/phase_12_threshold_optimization.md) & [Optimizer](src/evaluation/threshold_optimizer.py) |
+| **13** | **Model Explainability (SHAP TreeExplainer)** | ✅ Completed | [Explainability Spec](docs/phase_13_model_explainability.md) & [SHAP Engine](src/explanation/shap_explainer.py) |
+| **14** | **Production Inference Pipeline** | ✅ Completed | [Inference Spec](docs/phase_14_production_inference.md) & [Predict CLI](src/prediction/predict.py) |
+| **15** | **FastAPI REST Backend Service** | ✅ Completed | [API Routes](api/routes.py) & [API App](api/main.py) |
+| **16** | **Input Validation & Error Handling** | ✅ Completed | [Pydantic Schemas](api/schemas.py) & Whitelist Validation |
 | **17** | PostgreSQL Storage | ⏳ Pending | Schema, migrations, and prediction audit log |
 | **18** | React Frontend Dashboard | ⏳ Pending | Interactive URL analyzer & visualizer |
 | **19** | Security-Aware UI | ⏳ Pending | Risk indicators & actionable security guidance |
