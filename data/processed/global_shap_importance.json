@@ -1,0 +1,94 @@
+{
+  "model_name": "Random Forest",
+  "sample_size": 50,
+  "rankings": [
+    {
+      "feature": "domain_length",
+      "mean_abs_shap": 0.1035
+    },
+    {
+      "feature": "query_length",
+      "mean_abs_shap": 0.0956
+    },
+    {
+      "feature": "number_of_digits",
+      "mean_abs_shap": 0.079
+    },
+    {
+      "feature": "number_of_subdomains",
+      "mean_abs_shap": 0.0428
+    },
+    {
+      "feature": "number_of_dots",
+      "mean_abs_shap": 0.0421
+    },
+    {
+      "feature": "path_length",
+      "mean_abs_shap": 0.0388
+    },
+    {
+      "feature": "domain_entropy",
+      "mean_abs_shap": 0.0325
+    },
+    {
+      "feature": "suspicious_keyword_count",
+      "mean_abs_shap": 0.0256
+    },
+    {
+      "feature": "url_entropy",
+      "mean_abs_shap": 0.025
+    },
+    {
+      "feature": "number_of_equals",
+      "mean_abs_shap": 0.0211
+    },
+    {
+      "feature": "url_length",
+      "mean_abs_shap": 0.019
+    },
+    {
+      "feature": "has_ip_address",
+      "mean_abs_shap": 0.0188
+    },
+    {
+      "feature": "number_of_hyphens",
+      "mean_abs_shap": 0.018
+    },
+    {
+      "feature": "number_of_slashes",
+      "mean_abs_shap": 0.0081
+    },
+    {
+      "feature": "number_of_question_marks",
+      "mean_abs_shap": 0.0048
+    },
+    {
+      "feature": "uses_https",
+      "mean_abs_shap": 0.0042
+    },
+    {
+      "feature": "has_query",
+      "mean_abs_shap": 0.0038
+    },
+    {
+      "feature": "brand_in_subdomain",
+      "mean_abs_shap": 0.0034
+    },
+    {
+      "feature": "number_of_special_characters",
+      "mean_abs_shap": 0.0023
+    },
+    {
+      "feature": "has_port",
+      "mean_abs_shap": 0.0
+    },
+    {
+      "feature": "has_fragment",
+      "mean_abs_shap": 0.0
+    },
+    {
+      "feature": "is_punycode",
+      "mean_abs_shap": 0.0
+    }
+  ]
+}
