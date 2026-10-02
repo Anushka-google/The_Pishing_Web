@@ -8,7 +8,7 @@ def test_rigorous_validation_suite_checks():
     report = suite.run_all_checks()
 
     assert report["all_passed"] is True
-    assert len(report["checks"]) == 6
+    assert len(report["checks"]) == 8
 
     # Verify every check passed individually
     for check in report["checks"]:

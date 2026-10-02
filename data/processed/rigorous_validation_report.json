@@ -57,7 +57,27 @@
       "correctly_allowed_auth_pages": 1686,
       "false_alarms": 0,
       "false_positive_rate_on_auth_pages": 0.0
+    },
+    {
+      "name": "Check 7: Duplicates, Domains & Template Overlap",
+      "passed": true,
+      "exact_duplicates_across_split": 0,
+      "domain_overlap_count": 0,
+      "shared_structural_templates_pct": 99.95,
+      "scientific_disclosure": "Domain overlap is strictly 0 and exact duplicates are 0 across splits. However, 99.95% of synthetic test URLs share underlying path skeletons with the training set. This demonstrates synthetic template repetition and proves why independent external holdout evaluation is scientifically necessary."
+    },
+    {
+      "name": "Check 8: Independent Real-World Holdout",
+      "passed": true,
+      "external_dataset_source": "URLhaus (abuse.ch live feeds) + Tranco Top-1M",
+      "external_holdout_samples": 9816,
+      "holdout_accuracy": 0.9311,
+      "holdout_precision": 1.0,
+      "holdout_recall": 0.8616,
+      "holdout_f1_score": 0.9257,
+      "holdout_roc_auc": 0.9865,
+      "scientific_disclosure": "Tested on 9,816 live external internet URLs. Precision is 100.00% (0 False Positives on real benign domains), Recall is 86.16% (vs. ~99.9% on synthetic data). The ~14% recall drop empirically reflects real-world threat variance beyond synthetic templates."
     }
   ],
-  "verdict": "100% AIRTIGHT - ALL LEAKAGE & ROBUSTNESS CHECKS PASSED"
+  "verdict": "DOMAIN-DISJOINT & REAL-WORLD VALIDATED (SYNTHETIC TEMPLATE BIAS DISCLOSED)"
 }
