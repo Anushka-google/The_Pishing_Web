@@ -54,7 +54,7 @@ Risk Engine (Calibrated Probability → LOW / MEDIUM / HIGH + SHAP Explanations)
 | **17** | **Relational Storage (PostgreSQL & SQLite)** | ✅ Completed | [Database Spec](docs/phase_17_postgresql_storage.md) & [Repository](database/repository.py) |
 | **18** | **React Frontend Dashboard** | ✅ Completed | [Frontend Spec](docs/phase_18_19_react_frontend.md) & [Vite React App](frontend/src/App.jsx) |
 | **19** | **Security-Aware UI & Explainability** | ✅ Completed | [ResultCard](frontend/src/components/ResultCard.jsx) & [RiskExplanation](frontend/src/components/RiskExplanation.jsx) |
-| **20** | Testing Suite | ⏳ Pending | Unit, integration, and ML validation tests |
+| **20** | **Comprehensive Testing Suite (Unit, API, ML)** | ✅ Completed | [Test Spec](docs/phase_20_testing_harness.md) & 69 Passing Tests |
 | **21** | Docker Containerization | ⏳ Pending | Multi-container docker-compose setup |
 | **22** | MLflow Experiment Tracking | ⏳ Pending | Metric logging & artifact registry |
 | **23** | Model Versioning & Rollback | ⏳ Pending | Version management & deployment safety |

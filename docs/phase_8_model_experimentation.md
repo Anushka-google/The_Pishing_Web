@@ -4,10 +4,10 @@ Comparison of linear and tree-based classifiers evaluated on 9,450 URL feature v
 
 | Model | Precision | Recall | F1 | ROC-AUC | PR-AUC | Accuracy | Train Time | Latency/URL |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| Logistic Regression | 92.19% | 93.86% | 93.02% | 0.9780 | 0.9809 | 92.40% | 0.063s | 0.0008 ms |
-| Decision Tree | 99.70% | 99.70% | 99.70% | 0.9977 | 0.9965 | 99.67% | 0.015s | 0.0006 ms |
-| **Random Forest** | 100.00% | 99.80% | **99.90%** | 1.0000 | 1.0000 | 99.89% | 0.295s | 0.0479 ms |
-| XGBoost | 99.90% | 99.80% | 99.85% | 1.0000 | 1.0000 | 99.84% | 0.125s | 0.0020 ms |
+| Logistic Regression | 92.19% | 93.86% | 93.02% | 0.9780 | 0.9809 | 92.40% | 0.028s | 0.0007 ms |
+| Decision Tree | 99.70% | 99.70% | 99.70% | 0.9977 | 0.9965 | 99.67% | 0.016s | 0.0005 ms |
+| **Random Forest** | 100.00% | 99.80% | **99.90%** | 1.0000 | 1.0000 | 99.89% | 0.283s | 0.0697 ms |
+| XGBoost | 99.90% | 99.80% | 99.85% | 1.0000 | 1.0000 | 99.84% | 0.132s | 0.0020 ms |
 
 ## 🏆 Final Model Selection: **Random Forest**
 
