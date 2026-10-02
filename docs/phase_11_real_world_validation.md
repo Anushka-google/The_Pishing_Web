@@ -11,10 +11,10 @@
 
 | Model | Accuracy | Precision | Recall | F1-Score | ROC-AUC | PR-AUC | Latency / URL |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **Logistic Regression** | 99.85% | 100.00% | 99.71% | 99.86% | 0.9997 | 0.9998 | 0.0002 ms |
+| **Logistic Regression** | 99.85% | 100.00% | 99.71% | 99.86% | 0.9997 | 0.9998 | 0.0005 ms |
 | **Decision Tree** | 99.90% | 100.00% | 99.81% | 99.90% | 0.9990 | 0.9991 | 0.0002 ms |
-| **Random Forest** | 99.90% | 100.00% | 99.81% | 99.90% | 0.9998 | 0.9998 | 0.0248 ms |
-| **XGBoost** | 99.90% | 100.00% | 99.81% | 99.90% | 0.9996 | 0.9997 | 0.0012 ms |
+| **Random Forest** | 99.90% | 100.00% | 99.81% | 99.90% | 0.9998 | 0.9998 | 0.0280 ms |
+| **XGBoost** | 99.90% | 100.00% | 99.81% | 99.90% | 0.9996 | 0.9997 | 0.0014 ms |
 
 ## Key Interview Defense:
 > *“The initial curated dataset was used for pipeline development and unit testing. We then validated the trained system on 10,000 independently sourced real-world URLs from URLhaus and the Tranco Top-1M list using strict domain-grouped splitting (GroupShuffleSplit). The results prove high zero-day generalization across brand-new, unseen internet domains.”*

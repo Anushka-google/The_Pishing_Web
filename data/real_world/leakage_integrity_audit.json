@@ -1,0 +1,26 @@
+{
+  "rule_1_exact_duplicates_across_datasets": 0,
+  "rule_2_near_duplicates_across_datasets": 0,
+  "rule_3_unique_dev_domains": 5459,
+  "rule_3_unique_disjoint_real_domains": 7304,
+  "rule_3_domain_overlap_count": 0,
+  "rule_4_strict_unseen_holdout_evaluation": {
+    "model_tested": "Random Forest",
+    "total_real_world_urls": 9816,
+    "real_phishing_count": 4885,
+    "real_legitimate_count": 4931,
+    "accuracy": 0.9311,
+    "precision": 1.0,
+    "recall": 0.8616,
+    "f1_score": 0.9257,
+    "roc_auc": 0.9865,
+    "confusion_matrix": {
+      "tp": 4209,
+      "fp": 0,
+      "tn": 4931,
+      "fn": 676
+    }
+  },
+  "rule_5_scaler_fit_strictly_on_train": true,
+  "audit_verdict": "PASSED - ZERO TRAINING/TEST LEAKAGE CONFIRMED"
+}
