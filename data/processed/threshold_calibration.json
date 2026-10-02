@@ -1,0 +1,30 @@
+{
+  "default_baseline_threshold": 0.5,
+  "optimal_f1_threshold": 0.2872,
+  "calibrated_thresholds": {
+    "t1_low_risk_threshold": 0.4,
+    "t2_high_risk_threshold": 0.65
+  },
+  "risk_tier_definitions": {
+    "LOW_RISK": "Probability < 0.40 (Safe / Benign)",
+    "MEDIUM_RISK": "0.40 <= Probability < 0.65 (Suspicious / Secondary Inspection)",
+    "HIGH_RISK": "Probability >= 0.65 (Critical Phishing Alert / Block)"
+  },
+  "metrics_at_optimal_f1": {
+    "threshold": 0.2872,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1_score": 1.0,
+    "fpr": 0.0,
+    "tpr": 1.0,
+    "tp": 1009.0,
+    "fp": 0.0,
+    "tn": 838.0,
+    "fn": 0.0
+  },
+  "validation_sample_size": 1847,
+  "sample_operating_points": {
+    "high_recall_operating_point": null,
+    "high_precision_operating_point": null
+  }
+}
