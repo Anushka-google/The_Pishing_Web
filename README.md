@@ -45,7 +45,7 @@ Risk Engine (Calibrated Probability → LOW / MEDIUM / HIGH + SHAP Explanations)
 | **8** | **Baseline ML Model** | ✅ Completed | [Baseline Spec](docs/phase_8_baseline_model.md) & [Trainer](src/training/train_baseline.py) |
 | **9** | **Model Experimentation** | ✅ Completed | [Comparison Report](docs/phase_8_model_experimentation.md) & [Notebook](notebooks/03_model_experimentation.ipynb) |
 | **10** | Class Imbalance Handling | ⏳ Pending | Class weights, sampling, and cost curves |
-| **11** | Leakage-Safe Evaluation | ⏳ Pending | Domain-level splitting & duplicate control |
+| **11** | **Leakage-Safe Evaluation** | ✅ Completed | [Leakage Audit Spec](docs/phase_11_leakage_safe_evaluation.md) & [Domain Grouping](src/training/leakage_safe_evaluation.py) |
 | **12** | Threshold Optimization | ⏳ Pending | Multi-tier operating threshold calibration |
 | **13** | Model Explainability (SHAP) | ⏳ Pending | Global & local feature attribution |
 | **14** | Production Inference Pipeline | ⏳ Pending | Production prediction pipeline & artifact packaging |

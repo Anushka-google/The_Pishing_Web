@@ -1,70 +1,70 @@
 [
   {
     "model": "Logistic Regression",
-    "precision": 1.0,
-    "recall": 1.0,
-    "f1": 1.0,
-    "roc_auc": 1.0,
-    "pr_auc": 1.0,
-    "accuracy": 1.0,
-    "train_time_sec": 0.0108,
-    "latency_ms_per_url": 0.0006,
+    "precision": 0.9219,
+    "recall": 0.9386,
+    "f1": 0.9302,
+    "roc_auc": 0.978,
+    "pr_auc": 0.9809,
+    "accuracy": 0.924,
+    "train_time_sec": 0.0304,
+    "latency_ms_per_url": 0.0008,
     "confusion_matrix": {
-      "tp": 998,
-      "fp": 0,
-      "tn": 892,
-      "fn": 0
+      "tp": 933,
+      "fp": 79,
+      "tn": 769,
+      "fn": 61
     }
   },
   {
     "model": "Decision Tree",
-    "precision": 0.999,
-    "recall": 1.0,
-    "f1": 0.9995,
-    "roc_auc": 0.9994,
-    "pr_auc": 0.999,
-    "accuracy": 0.9995,
-    "train_time_sec": 0.0206,
-    "latency_ms_per_url": 0.0004,
+    "precision": 0.997,
+    "recall": 0.997,
+    "f1": 0.997,
+    "roc_auc": 0.9977,
+    "pr_auc": 0.9965,
+    "accuracy": 0.9967,
+    "train_time_sec": 0.0081,
+    "latency_ms_per_url": 0.0003,
     "confusion_matrix": {
-      "tp": 998,
-      "fp": 1,
-      "tn": 891,
-      "fn": 0
+      "tp": 991,
+      "fp": 3,
+      "tn": 845,
+      "fn": 3
     }
   },
   {
     "model": "Random Forest",
     "precision": 1.0,
-    "recall": 1.0,
-    "f1": 1.0,
+    "recall": 0.998,
+    "f1": 0.999,
     "roc_auc": 1.0,
     "pr_auc": 1.0,
-    "accuracy": 1.0,
-    "train_time_sec": 0.2687,
-    "latency_ms_per_url": 0.0294,
+    "accuracy": 0.9989,
+    "train_time_sec": 0.2264,
+    "latency_ms_per_url": 0.0358,
     "confusion_matrix": {
-      "tp": 998,
+      "tp": 992,
       "fp": 0,
-      "tn": 892,
-      "fn": 0
+      "tn": 848,
+      "fn": 2
     }
   },
   {
     "model": "XGBoost",
-    "precision": 1.0,
-    "recall": 1.0,
-    "f1": 1.0,
+    "precision": 0.999,
+    "recall": 0.998,
+    "f1": 0.9985,
     "roc_auc": 1.0,
     "pr_auc": 1.0,
-    "accuracy": 1.0,
-    "train_time_sec": 0.0565,
-    "latency_ms_per_url": 0.0012,
+    "accuracy": 0.9984,
+    "train_time_sec": 0.0909,
+    "latency_ms_per_url": 0.0016,
     "confusion_matrix": {
-      "tp": 998,
-      "fp": 0,
-      "tn": 892,
-      "fn": 0
+      "tp": 992,
+      "fp": 1,
+      "tn": 847,
+      "fn": 2
     }
   }
 ]

@@ -4,12 +4,12 @@ Comparison of linear and tree-based classifiers evaluated on 9,450 URL feature v
 
 | Model | Precision | Recall | F1 | ROC-AUC | PR-AUC | Accuracy | Train Time | Latency/URL |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **Logistic Regression** | 100.00% | 100.00% | **100.00%** | 1.0000 | 1.0000 | 100.00% | 0.011s | 0.0006 ms |
-| Decision Tree | 99.90% | 100.00% | 99.95% | 0.9994 | 0.9990 | 99.95% | 0.021s | 0.0004 ms |
-| Random Forest | 100.00% | 100.00% | 100.00% | 1.0000 | 1.0000 | 100.00% | 0.269s | 0.0294 ms |
-| XGBoost | 100.00% | 100.00% | 100.00% | 1.0000 | 1.0000 | 100.00% | 0.057s | 0.0012 ms |
+| Logistic Regression | 92.19% | 93.86% | 93.02% | 0.9780 | 0.9809 | 92.40% | 0.030s | 0.0008 ms |
+| Decision Tree | 99.70% | 99.70% | 99.70% | 0.9977 | 0.9965 | 99.67% | 0.008s | 0.0003 ms |
+| **Random Forest** | 100.00% | 99.80% | **99.90%** | 1.0000 | 1.0000 | 99.89% | 0.226s | 0.0358 ms |
+| XGBoost | 99.90% | 99.80% | 99.85% | 1.0000 | 1.0000 | 99.84% | 0.091s | 0.0016 ms |
 
-## 🏆 Final Model Selection: **Logistic Regression**
+## 🏆 Final Model Selection: **Random Forest**
 
 ### Selection Rationale (Experimental Evidence vs Popularity):
 1. **Evidence-Based Choice:** Rather than selecting XGBoost purely because of its popularity, the decision is driven by measured F1-score, False Negative suppression, and discriminative ranking (ROC-AUC).
