@@ -7,8 +7,8 @@
     "roc_auc": 0.978,
     "pr_auc": 0.9809,
     "accuracy": 0.924,
-    "train_time_sec": 0.0304,
-    "latency_ms_per_url": 0.0008,
+    "train_time_sec": 0.025,
+    "latency_ms_per_url": 0.0005,
     "confusion_matrix": {
       "tp": 933,
       "fp": 79,
@@ -24,8 +24,8 @@
     "roc_auc": 0.9977,
     "pr_auc": 0.9965,
     "accuracy": 0.9967,
-    "train_time_sec": 0.0081,
-    "latency_ms_per_url": 0.0003,
+    "train_time_sec": 0.0073,
+    "latency_ms_per_url": 0.0002,
     "confusion_matrix": {
       "tp": 991,
       "fp": 3,
@@ -41,8 +41,8 @@
     "roc_auc": 1.0,
     "pr_auc": 1.0,
     "accuracy": 0.9989,
-    "train_time_sec": 0.2264,
-    "latency_ms_per_url": 0.0358,
+    "train_time_sec": 0.1728,
+    "latency_ms_per_url": 0.0284,
     "confusion_matrix": {
       "tp": 992,
       "fp": 0,
@@ -58,8 +58,8 @@
     "roc_auc": 1.0,
     "pr_auc": 1.0,
     "accuracy": 0.9984,
-    "train_time_sec": 0.0909,
-    "latency_ms_per_url": 0.0016,
+    "train_time_sec": 0.1466,
+    "latency_ms_per_url": 0.0029,
     "confusion_matrix": {
       "tp": 992,
       "fp": 1,
