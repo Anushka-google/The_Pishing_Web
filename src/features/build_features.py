@@ -37,6 +37,8 @@ def build_feature_dataset(
     feature_df["label"] = df["label"].values
     feature_df["source"] = df["source"].values
     feature_df["url"] = df["url"].values
+    if "collection_date" in df.columns:
+        feature_df["collection_date"] = df["collection_date"].values
 
     os.makedirs(os.path.dirname(output_csv), exist_ok=True)
     feature_df.to_csv(output_csv, index=False)

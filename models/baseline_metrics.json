@@ -6,7 +6,7 @@
   "f1_score": 0.9302,
   "roc_auc": 0.978,
   "pr_auc": 0.9809,
-  "train_time_sec": 0.0245,
+  "train_time_sec": 0.035,
   "inference_latency_ms": 0.0002,
   "confusion_matrix": {
     "tp": 933,

@@ -1,0 +1,63 @@
+{
+  "all_passed": true,
+  "checks": [
+    {
+      "name": "Check 1: No Label Leakage",
+      "passed": true,
+      "leaked_feature_names": [],
+      "suspiciously_high_correlations": {},
+      "max_feature_correlation": 0.3999
+    },
+    {
+      "name": "Check 2: Class Distribution Balance",
+      "passed": true,
+      "train_phishing_pct": 53.83,
+      "train_legitimate_pct": 46.17,
+      "test_phishing_pct": 54.63,
+      "test_legitimate_pct": 45.37
+    },
+    {
+      "name": "Check 3: Train vs Test Generalization Gap",
+      "passed": true,
+      "train_f1": 1.0,
+      "test_f1": 0.9995,
+      "generalization_gap": 0.0005,
+      "overfitting_risk": "Low / Healthy"
+    },
+    {
+      "name": "Check 4: Multi-Seed Stability Test",
+      "passed": true,
+      "tested_seeds": [
+        42,
+        101,
+        202,
+        303,
+        404
+      ],
+      "mean_f1": 0.9998,
+      "std_f1": 0.0002,
+      "mean_accuracy": 0.9998,
+      "mean_roc_auc": 1.0,
+      "verdict": "Stable across different data splits"
+    },
+    {
+      "name": "Check 5: Time-Based Validation",
+      "passed": true,
+      "past_training_samples": 6763,
+      "future_testing_samples": 2443,
+      "temporal_accuracy": 0.9996,
+      "temporal_f1_score": 0.9996,
+      "temporal_roc_auc": 1.0,
+      "verdict": "Resistant to temporal distribution shift"
+    },
+    {
+      "name": "Check 6: Hard Negatives Resilience",
+      "passed": true,
+      "hard_negatives_count": 1686,
+      "correctly_allowed_auth_pages": 1686,
+      "false_alarms": 0,
+      "false_positive_rate_on_auth_pages": 0.0
+    }
+  ],
+  "verdict": "100% AIRTIGHT - ALL LEAKAGE & ROBUSTNESS CHECKS PASSED"
+}

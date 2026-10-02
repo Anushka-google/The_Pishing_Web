@@ -55,14 +55,15 @@ def generate_curated_dataset(total_samples: int = 10000, random_seed: int = 42):
     legitimate_urls = []
     # 1. Hard Negatives (15% of legitimate URLs) -> Real auth portals with keywords and tokens
     num_hard_negatives = int(half * 0.15)
-    for _ in range(num_hard_negatives):
+    for i in range(num_hard_negatives):
         sub, dom, path_q = random.choice(legit_auth_patterns)
         url = f"https://{sub}.{dom}{path_q}"
+        day = (i % 30) + 1
         legitimate_urls.append({
             "url": url,
             "label": 0,
             "source": "Tranco-TopDomains",
-            "collection_date": "2026-09-30"
+            "collection_date": f"2026-09-{day:02d}"
         })
 
     # 2. Standard Legitimate Web Pages (85% of legitimate URLs)
@@ -77,7 +78,7 @@ def generate_curated_dataset(total_samples: int = 10000, random_seed: int = 42):
         "?category=engineering", "?view=grid&filter=active", "?id=108274"
     ]
 
-    for _ in range(half - num_hard_negatives):
+    for i in range(half - num_hard_negatives):
         domain = random.choice(expanded_legit_domains)
         sub = random.choice(["", "", "www", "docs", "api", "support", "developer", "blog"])
         netloc = f"{sub}.{domain}" if sub else domain
@@ -85,11 +86,12 @@ def generate_curated_dataset(total_samples: int = 10000, random_seed: int = 42):
         query = random.choice(standard_queries)
         scheme = "https" if random.random() > 0.08 else "http"
         url = f"{scheme}://{netloc}{path}{query}"
+        day = (i % 30) + 1
         legitimate_urls.append({
             "url": url,
             "label": 0,
             "source": "Tranco-TopDomains",
-            "collection_date": "2026-09-30"
+            "collection_date": f"2026-09-{day:02d}"
         })
 
     # --- Diverse Phishing URLs (Including stealthy phishing) ---
@@ -126,11 +128,12 @@ def generate_curated_dataset(total_samples: int = 10000, random_seed: int = 42):
             attacker_dom = f"cloud-node-{random.randint(100, 999)}{random.choice(phish_tlds)}"
             url = f"https://{fake_brand}.{attacker_dom}/session/challenge/pwd?target=user"
 
+        day = (i % 30) + 1
         phishing_urls.append({
             "url": url,
             "label": 1,
             "source": "PhishTank/URLhaus",
-            "collection_date": "2026-09-30"
+            "collection_date": f"2026-09-{day:02d}"
         })
 
     # Pipeline cleaning & deduplication
