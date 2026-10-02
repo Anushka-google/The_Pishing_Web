@@ -1,0 +1,19 @@
+{
+  "model_name": "Logistic Regression (Baseline)",
+  "accuracy": 1.0,
+  "precision": 1.0,
+  "recall": 1.0,
+  "f1_score": 1.0,
+  "roc_auc": 1.0,
+  "pr_auc": 1.0,
+  "train_time_sec": 0.0111,
+  "inference_latency_ms": 0.0002,
+  "confusion_matrix": {
+    "tp": 998,
+    "fp": 0,
+    "tn": 892,
+    "fn": 0
+  },
+  "train_samples": 7560,
+  "test_samples": 1890
+}

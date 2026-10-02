@@ -42,8 +42,8 @@ Risk Engine (Calibrated Probability → LOW / MEDIUM / HIGH + SHAP Explanations)
 | **5** | **URL Parsing Component** | ✅ Completed | [URL Parser Spec](docs/phase_5_url_parsing.md) & [Parser Code](src/preprocessing/url_parser.py) |
 | **6** | **Feature Engineering** | ✅ Completed | [Feature Engineering Spec](docs/phase_6_feature_engineering.md) & 22 Engineered Signals |
 | **7** | **Feature Extractor Implementation** | ✅ Completed | [Feature Extractor](src/features/extractor.py) & [Dataset Matrix](src/features/build_features.py) |
-| **8** | Baseline ML Model | ⏳ Pending | Logistic Regression benchmark & metrics |
-| **9** | Model Experimentation | ⏳ Pending | Decision Tree, Random Forest, XGBoost comparison |
+| **8** | **Baseline ML Model** | ✅ Completed | [Baseline Spec](docs/phase_8_baseline_model.md) & [Trainer](src/training/train_baseline.py) |
+| **9** | **Model Experimentation** | ✅ Completed | [Comparison Report](docs/phase_8_model_experimentation.md) & [Notebook](notebooks/03_model_experimentation.ipynb) |
 | **10** | Class Imbalance Handling | ⏳ Pending | Class weights, sampling, and cost curves |
 | **11** | Leakage-Safe Evaluation | ⏳ Pending | Domain-level splitting & duplicate control |
 | **12** | Threshold Optimization | ⏳ Pending | Multi-tier operating threshold calibration |
