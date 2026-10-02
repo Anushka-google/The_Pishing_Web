@@ -1,0 +1,199 @@
+{
+  "experiment_name": "Phishing_Detection_Intelligence",
+  "tracking_uri": "sqlite:///data/mlflow.db",
+  "dataset_metadata": {
+    "version": "v1.2.0-curated",
+    "sha256": "ba80ea8f91953c6e0dd8f7be32b08e758efa652bd76da7f3d6152ffca991c73d",
+    "file_path": "data/processed/features.csv",
+    "total_samples": 9206,
+    "num_features": 22,
+    "phishing_samples": 4970,
+    "legitimate_samples": 4236,
+    "phishing_ratio": 0.5399
+  },
+  "champion_model": {
+    "run_id": "43b699950e05474eac088278c29c10a6",
+    "run_name": "Random_Forest",
+    "model_name": "Random Forest",
+    "metrics": {
+      "precision": 1.0,
+      "recall": 0.998,
+      "f1_score": 0.999,
+      "roc_auc": 1.0,
+      "pr_auc": 1.0,
+      "accuracy": 0.9989,
+      "training_time_seconds": 0.2984,
+      "latency_ms_per_url": 0.0455,
+      "true_positives": 992,
+      "false_positives": 0,
+      "true_negatives": 848,
+      "false_negatives": 2,
+      "false_positive_rate": 0.0,
+      "false_negative_rate": 0.002
+    },
+    "params": {
+      "model_type": "Random Forest",
+      "n_estimators": 100,
+      "max_depth": 12,
+      "criterion": "gini",
+      "random_state": 42
+    }
+  },
+  "runs": [
+    {
+      "run_id": "1dd09cdf67ef41a58e1c42a5f0079fc5",
+      "run_name": "XGBoost_Tuned",
+      "model_name": "XGBoost",
+      "framework": "xgboost",
+      "params": {
+        "model_type": "XGBoost",
+        "n_estimators": 300,
+        "max_depth": 6,
+        "learning_rate": 0.05,
+        "subsample": 0.8,
+        "colsample_bytree": 0.8,
+        "eval_metric": "logloss",
+        "random_state": 42
+      },
+      "metrics": {
+        "precision": 0.997,
+        "recall": 0.999,
+        "f1_score": 0.998,
+        "roc_auc": 1.0,
+        "pr_auc": 1.0,
+        "accuracy": 0.9978,
+        "training_time_seconds": 0.4754,
+        "latency_ms_per_url": 0.0114,
+        "true_positives": 993,
+        "false_positives": 3,
+        "true_negatives": 845,
+        "false_negatives": 1,
+        "false_positive_rate": 0.0035,
+        "false_negative_rate": 0.001
+      },
+      "is_champion": false
+    },
+    {
+      "run_id": "9208bc8b2f6845e891c4861a1c442393",
+      "run_name": "XGBoost_Baseline",
+      "model_name": "XGBoost",
+      "framework": "xgboost",
+      "params": {
+        "model_type": "XGBoost",
+        "n_estimators": 100,
+        "max_depth": 6,
+        "learning_rate": 0.1,
+        "eval_metric": "logloss",
+        "random_state": 42
+      },
+      "metrics": {
+        "precision": 0.999,
+        "recall": 0.998,
+        "f1_score": 0.9985,
+        "roc_auc": 1.0,
+        "pr_auc": 1.0,
+        "accuracy": 0.9984,
+        "training_time_seconds": 0.2324,
+        "latency_ms_per_url": 0.0075,
+        "true_positives": 992,
+        "false_positives": 1,
+        "true_negatives": 847,
+        "false_negatives": 2,
+        "false_positive_rate": 0.0012,
+        "false_negative_rate": 0.002
+      },
+      "is_champion": false
+    },
+    {
+      "run_id": "43b699950e05474eac088278c29c10a6",
+      "run_name": "Random_Forest",
+      "model_name": "Random Forest",
+      "framework": "sklearn",
+      "params": {
+        "model_type": "Random Forest",
+        "n_estimators": 100,
+        "max_depth": 12,
+        "criterion": "gini",
+        "random_state": 42
+      },
+      "metrics": {
+        "precision": 1.0,
+        "recall": 0.998,
+        "f1_score": 0.999,
+        "roc_auc": 1.0,
+        "pr_auc": 1.0,
+        "accuracy": 0.9989,
+        "training_time_seconds": 0.2984,
+        "latency_ms_per_url": 0.0455,
+        "true_positives": 992,
+        "false_positives": 0,
+        "true_negatives": 848,
+        "false_negatives": 2,
+        "false_positive_rate": 0.0,
+        "false_negative_rate": 0.002
+      },
+      "is_champion": true
+    },
+    {
+      "run_id": "c7253537135e4d6ca5b5ebc064e77ec2",
+      "run_name": "Decision_Tree",
+      "model_name": "Decision Tree",
+      "framework": "sklearn",
+      "params": {
+        "model_type": "Decision Tree",
+        "max_depth": 10,
+        "min_samples_split": 5,
+        "criterion": "gini",
+        "random_state": 42
+      },
+      "metrics": {
+        "precision": 0.997,
+        "recall": 0.997,
+        "f1_score": 0.997,
+        "roc_auc": 0.9977,
+        "pr_auc": 0.9965,
+        "accuracy": 0.9967,
+        "training_time_seconds": 0.0126,
+        "latency_ms_per_url": 0.0015,
+        "true_positives": 991,
+        "false_positives": 3,
+        "true_negatives": 845,
+        "false_negatives": 3,
+        "false_positive_rate": 0.0035,
+        "false_negative_rate": 0.003
+      },
+      "is_champion": false
+    },
+    {
+      "run_id": "ff39e8365d764d9d9b2e29ddf9a1b5b0",
+      "run_name": "Logistic_Regression",
+      "model_name": "Logistic Regression",
+      "framework": "sklearn",
+      "params": {
+        "model_type": "Logistic Regression",
+        "C": 1.0,
+        "solver": "lbfgs",
+        "max_iter": 1000,
+        "scaler": "StandardScaler",
+        "random_state": 42
+      },
+      "metrics": {
+        "precision": 0.9219,
+        "recall": 0.9386,
+        "f1_score": 0.9302,
+        "roc_auc": 0.978,
+        "pr_auc": 0.9809,
+        "accuracy": 0.924,
+        "training_time_seconds": 0.0388,
+        "latency_ms_per_url": 0.001,
+        "true_positives": 933,
+        "false_positives": 79,
+        "true_negatives": 769,
+        "false_negatives": 61,
+        "false_positive_rate": 0.0932,
+        "false_negative_rate": 0.0614
+      },
+      "is_champion": false
+    }
+  ]
+}
