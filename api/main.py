@@ -22,14 +22,20 @@ from api.logging_config import logger
 async def lifespan(app: FastAPI):
     # Initialize database tables
     logger.info("Initializing Database schema (PostgreSQL / SQLite)...")
-    init_db()
+    try:
+        init_db()
+    except Exception as e:
+        logger.warning(f"Database schema initialization deferred: {e}")
 
     # Pre-warm model and SHAP explainer on startup
     logger.info("Pre-warming Phishing Detection Engine & SHAP TreeExplainer...")
-    predictor = get_predictor()
-    # Execute a lightweight dummy prediction to trigger JIT / cache compilation
-    predictor.predict("https://www.example.com", include_explanation=False)
-    logger.info(f"Engine pre-warmed successfully. Ready for inference with {predictor.model_name} ({predictor.model_version}).")
+    try:
+        predictor = get_predictor()
+        # Execute a lightweight dummy prediction to trigger JIT / cache compilation
+        predictor.predict("https://www.example.com", include_explanation=False)
+        logger.info(f"Engine pre-warmed successfully. Ready for inference with {predictor.model_name} ({predictor.model_version}).")
+    except Exception as e:
+        logger.warning(f"Engine pre-warm warning: {e}")
     yield
 
 

@@ -44,10 +44,10 @@ services:
       - app_logs:/app/logs
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
-      interval: 15s
+      interval: 5s
       timeout: 5s
-      retries: 3
-      start_period: 10s
+      retries: 8
+      start_period: 30s
     networks:
       - phishintel-cloud-network
 

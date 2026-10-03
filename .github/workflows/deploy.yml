@@ -49,8 +49,12 @@ jobs:
 
       - name: Test Local Stack Boot
         run: |
-          docker compose -f docker-compose.prod.yml up -d
-          sleep 25
+          docker compose -f docker-compose.prod.yml up -d || {
+            echo "==== DOCKER COMPOSE LOGS ON FAILURE ===="
+            docker compose -f docker-compose.prod.yml logs
+            exit 1
+          }
+          sleep 10
           docker compose -f docker-compose.prod.yml ps
 
       - name: Smoke Test Backend Health
