@@ -248,3 +248,48 @@ class RetrainingJustificationResponse(BaseModel):
     retraining_plan: RetrainingPlan
     metrics_summary: Dict[str, Any]
 
+
+# ---------------------------------------------------------
+# Phase 29: Advanced Extensions Schemas (35.1 - 35.4)
+# ---------------------------------------------------------
+
+class EnhancedAnalyzeRequest(BaseModel):
+    url: str = Field(..., description="Target URL to inspect across ML, reputation, DNS, and WHOIS.")
+    enable_reputation: bool = Field(default=True, description="Enable external threat intelligence reputation fusion.")
+    enable_dns: bool = Field(default=True, description="Enable live DNS record and resolution enrichment.")
+    enable_whois: bool = Field(default=True, description="Enable domain age and WHOIS registration enrichment.")
+
+
+class EnhancedAnalyzeResponse(BaseModel):
+    url: str
+    prediction: str
+    final_risk_level: str
+    final_action: str
+    recommendation: str
+    ml_probability: float
+    fused_probability: float
+    reputation: Optional[Dict[str, Any]] = None
+    dns: Optional[Dict[str, Any]] = None
+    whois: Optional[Dict[str, Any]] = None
+    execution_time_ms: float
+
+
+class EmailAnalyzeRequest(BaseModel):
+    subject: str = Field(..., description="Email subject line.")
+    body: str = Field(..., description="Plaintext or HTML email message body.")
+    sender_email: str = Field(..., description="Sender's email address (e.g. alert@notice.xyz).")
+    sender_display_name: Optional[str] = Field(default=None, description="Sender's display name header (e.g. 'PayPal Security').")
+    auth_headers: Optional[Dict[str, str]] = Field(default=None, description="Authentication headers (SPF, DKIM, DMARC).")
+
+
+class EmailAnalyzeResponse(BaseModel):
+    overall_verdict: str
+    overall_risk_score: float
+    risk_tier: str
+    recommendation: str
+    multimodal_scores: Dict[str, float]
+    url_analysis: Dict[str, Any]
+    sender_analysis: Dict[str, Any]
+    text_analysis: Dict[str, Any]
+
+

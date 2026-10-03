@@ -23,11 +23,16 @@ from api.schemas import (
     HistoryRecord, StatsResponse, HealthResponse,
     ModelVersionsResponse, ModelSwitchRequest, ModelSwitchResponse, ModelVersionItem,
     PerformanceResponse, PerformanceDistribution,
-    DriftMonitoringResponse, RetrainingJustificationRequest, RetrainingJustificationResponse
+    DriftMonitoringResponse, RetrainingJustificationRequest, RetrainingJustificationResponse,
+    EnhancedAnalyzeRequest, EnhancedAnalyzeResponse, EmailAnalyzeRequest, EmailAnalyzeResponse
 )
 from src.prediction.predict import ProductionPredictor
 from src.evaluation.performance_profiler import identify_bottleneck, SystemPerformanceProfiler
 from src.monitoring.drift_detector import ProductionMonitor, DataDriftDetector
+from src.extensions.reputation import DomainReputationEngine
+from src.extensions.dns_features import DNSFeatureExtractor
+from src.extensions.whois_features import WHOISFeatureExtractor
+from src.extensions.email_analyzer import EmailRiskAnalyzer
 from database.connection import get_db
 from database.repository import PredictionRepository
 from api.logging_config import logger, sanitize_url
@@ -55,6 +60,44 @@ def get_monitor() -> ProductionMonitor:
     if _monitor is None:
         _monitor = ProductionMonitor()
     return _monitor
+
+
+_reputation_engine: Optional[DomainReputationEngine] = None
+_dns_extractor: Optional[DNSFeatureExtractor] = None
+_whois_extractor: Optional[WHOISFeatureExtractor] = None
+_email_analyzer: Optional[EmailRiskAnalyzer] = None
+
+
+def get_reputation_engine() -> DomainReputationEngine:
+    global _reputation_engine
+    if _reputation_engine is None:
+        _reputation_engine = DomainReputationEngine()
+    return _reputation_engine
+
+
+def get_dns_extractor() -> DNSFeatureExtractor:
+    global _dns_extractor
+    if _dns_extractor is None:
+        _dns_extractor = DNSFeatureExtractor()
+    return _dns_extractor
+
+
+def get_whois_extractor() -> WHOISFeatureExtractor:
+    global _whois_extractor
+    if _whois_extractor is None:
+        _whois_extractor = WHOISFeatureExtractor()
+    return _whois_extractor
+
+
+def get_email_analyzer() -> EmailRiskAnalyzer:
+    global _email_analyzer
+    if _email_analyzer is None:
+        _email_analyzer = EmailRiskAnalyzer(
+            predictor=get_predictor(),
+            reputation_engine=get_reputation_engine()
+        )
+    return _email_analyzer
+
 
 
 @router.get("/health", response_model=HealthResponse, tags=["Health"])
@@ -554,4 +597,123 @@ async def evaluate_retraining_justification(
         retraining_plan=retrain_eval["retraining_plan"],
         metrics_summary=metrics_summary
     )
+
+
+@router.post("/analyze/enhanced", response_model=EnhancedAnalyzeResponse, tags=["Advanced Extensions"])
+async def analyze_url_enhanced(payload: EnhancedAnalyzeRequest, request: Request):
+    """
+    Phase 29: Advanced Multi-Signal URL Inspection.
+    Combines:
+    - ML Statistical Inference (Phase 1-14 Champion Model)
+    - External Domain Reputation Feeds & Whitelist (35.1)
+    - DNS Record & Resolution Characterization (35.2)
+    - WHOIS Domain Age & Registration Heuristics (35.3)
+    """
+    t0 = time.perf_counter()
+    predictor = get_predictor()
+    reputation_engine = get_reputation_engine()
+    dns_extractor = get_dns_extractor()
+    whois_extractor = get_whois_extractor()
+
+    # 1. Base ML Prediction
+    ml_res = predictor.predict(payload.url, include_explanation=False)
+    ml_prob = ml_res["probability"]
+
+    # 2. Domain Reputation Fusion (35.1)
+    rep_res = None
+    fused_prob = ml_prob
+    if payload.enable_reputation:
+        rep_fusion = reputation_engine.fuse_with_ml(ml_prob, payload.url)
+        rep_res = rep_fusion["reputation"]
+        fused_prob = rep_fusion["fused_probability"]
+
+    # 3. DNS Features (35.2)
+    dns_res = None
+    if payload.enable_dns:
+        dns_res = dns_extractor.extract_dns_features(payload.url)
+        if not dns_res["resolves"] and fused_prob < 0.65:
+            fused_prob = min(0.95, fused_prob + 0.20)
+        elif dns_res["is_fast_flux_suspect"]:
+            fused_prob = min(0.98, fused_prob + 0.35)
+
+    # 4. WHOIS & Domain Age (35.3)
+    whois_res = None
+    if payload.enable_whois:
+        whois_res = whois_extractor.extract_whois_features(payload.url)
+        if whois_res["is_newly_registered"] and fused_prob < 0.70:
+            fused_prob = min(0.95, fused_prob + 0.30)
+
+    fused_prob = round(float(fused_prob), 4)
+
+    # Calibrate final risk tier
+    if fused_prob >= 0.65:
+        final_risk = "HIGH"
+        final_action = "BLOCK"
+        recommendation = "Multi-signal threat confirmed (ML score + external intelligence). Block access immediately."
+    elif fused_prob >= 0.40:
+        final_risk = "MEDIUM"
+        final_action = "CAUTION"
+        recommendation = "Anomalies detected across domain characteristics. Exercise caution."
+    else:
+        final_risk = "LOW"
+        final_action = "ALLOW"
+        recommendation = "Verified safe. Domain conforms to trusted web standards."
+
+    elapsed_ms = (time.perf_counter() - t0) * 1000.0
+
+    logger.info(
+        f"Enhanced URL analysis completed: final_risk={final_risk}, fused_prob={fused_prob}",
+        extra={
+            "request_id": getattr(request.state, "request_id", None),
+            "endpoint": "POST /analyze/enhanced",
+            "url": sanitize_url(payload.url),
+            "fused_prob": fused_prob,
+            "final_risk": final_risk
+        }
+    )
+
+    return EnhancedAnalyzeResponse(
+        url=payload.url,
+        prediction="phishing" if fused_prob >= 0.50 else "legitimate",
+        final_risk_level=final_risk,
+        final_action=final_action,
+        recommendation=recommendation,
+        ml_probability=round(ml_prob, 4),
+        fused_probability=fused_prob,
+        reputation=rep_res,
+        dns=dns_res,
+        whois=whois_res,
+        execution_time_ms=round(elapsed_ms, 2)
+    )
+
+
+@router.post("/analyze/email", response_model=EmailAnalyzeResponse, tags=["Advanced Extensions"])
+async def analyze_email_phishing(payload: EmailAnalyzeRequest, request: Request):
+    """
+    Phase 29.4: Multi-Modal Email Phishing Detection.
+    Roadmap Architecture:
+    Email (Subject, Body, Links, Sender) -> URL + Text + Sender Features -> Risk Model.
+    Builds on top of reliable URL prediction and reputation intelligence.
+    """
+    email_analyzer = get_email_analyzer()
+    result = email_analyzer.analyze_email(
+        subject=payload.subject,
+        body=payload.body,
+        sender_email=payload.sender_email,
+        sender_display_name=payload.sender_display_name,
+        auth_headers=payload.auth_headers
+    )
+
+    logger.info(
+        f"Email phishing analysis completed: verdict={result['overall_verdict']}, score={result['overall_risk_score']}",
+        extra={
+            "request_id": getattr(request.state, "request_id", None),
+            "endpoint": "POST /analyze/email",
+            "sender": payload.sender_email,
+            "overall_verdict": result["overall_verdict"]
+        }
+    )
+
+    return EmailAnalyzeResponse(**result)
+
 

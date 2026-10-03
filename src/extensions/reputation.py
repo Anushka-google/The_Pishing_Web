@@ -130,8 +130,9 @@ class DomainReputationEngine:
         parsed = urlparse(raw)
         host = (parsed.hostname or "").lower().strip()
         extracted = self.tld_extractor(host)
-        if extracted.registered_domain:
-            return extracted.registered_domain.lower()
+        reg_domain = getattr(extracted, "top_domain_under_public_suffix", None) or extracted.registered_domain
+        if reg_domain:
+            return reg_domain.lower()
         return host
 
     def lookup_reputation(self, url: str) -> Dict[str, Any]:

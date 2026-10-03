@@ -198,7 +198,7 @@ class EmailRiskAnalyzer:
         sender_clean = sender_email.strip().lower()
         sender_host = sender_clean.split("@")[-1] if "@" in sender_clean else sender_clean
         extracted_sender = self.tld_extractor(sender_host)
-        sender_root = extracted_sender.registered_domain or sender_host
+        sender_root = getattr(extracted_sender, "top_domain_under_public_suffix", None) or extracted_sender.registered_domain or sender_host
 
         flags = []
         risk_score = 0.0
@@ -223,7 +223,8 @@ class EmailRiskAnalyzer:
         # 3. Sender domain vs Destination Link Mismatch
         if extracted_urls:
             first_url_host = urlparse(extracted_urls[0]).hostname or ""
-            target_root = self.tld_extractor(first_url_host).registered_domain
+            target_extracted = self.tld_extractor(first_url_host)
+            target_root = getattr(target_extracted, "top_domain_under_public_suffix", None) or target_extracted.registered_domain
             if target_root and sender_root and target_root != sender_root and sender_root not in self.FREE_EMAIL_PROVIDERS:
                 # E.g. email from legitimate corporate domain but links point to unrelated host
                 flags.append(f"DOMAIN_MISMATCH: Sender domain '{sender_root}' differs from primary link target '{target_root}'.")

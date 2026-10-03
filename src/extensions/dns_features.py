@@ -120,7 +120,7 @@ class DNSFeatureExtractor:
             # We check mailhost subdomain existence (mail.domain, smtp.domain)
             has_mx_heuristic = False
             extracted = self.tld_extractor(hostname)
-            root_domain = extracted.registered_domain or hostname
+            root_domain = getattr(extracted, "top_domain_under_public_suffix", None) or hostname
 
             if resolves:
                 try:
