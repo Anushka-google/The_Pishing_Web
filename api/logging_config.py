@@ -148,7 +148,9 @@ def setup_structured_logging(
         # File handler (if directory specified)
         if log_file:
             try:
-                os.makedirs(os.path.dirname(log_file), exist_ok=True)
+                dir_name = os.path.dirname(log_file)
+                if dir_name:
+                    os.makedirs(dir_name, exist_ok=True)
                 file_handler = logging.FileHandler(log_file, encoding="utf-8")
                 file_handler.setFormatter(formatter)
                 logger.addHandler(file_handler)
