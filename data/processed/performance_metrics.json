@@ -1,0 +1,84 @@
+{
+  "metadata": {
+    "iterations": 150,
+    "warmup_runs": 15,
+    "model_version": "v1",
+    "model_name": "Random Forest",
+    "feature_count": 22
+  },
+  "subsystems": {
+    "feature_extraction": {
+      "mean_ms": 0.293,
+      "median_p50_ms": 0.195,
+      "p90_ms": 0.361,
+      "p95_ms": 0.429,
+      "p99_ms": 2.728,
+      "min_ms": 0.103,
+      "max_ms": 4.545,
+      "std_ms": 0.461
+    },
+    "model_inference": {
+      "mean_ms": 30.392,
+      "median_p50_ms": 31.703,
+      "p90_ms": 40.889,
+      "p95_ms": 50.723,
+      "p99_ms": 57.009,
+      "min_ms": 17.087,
+      "max_ms": 84.094,
+      "std_ms": 11.045
+    },
+    "database_latency": {
+      "mean_ms": 1.798,
+      "median_p50_ms": 1.37,
+      "p90_ms": 2.309,
+      "p95_ms": 3.059,
+      "p99_ms": 7.193,
+      "min_ms": 0.984,
+      "max_ms": 23.66,
+      "std_ms": 2.011
+    },
+    "api_response_time": {
+      "mean_ms": 32.829,
+      "median_p50_ms": 33.739,
+      "p90_ms": 44.031,
+      "p95_ms": 54.177,
+      "p99_ms": 64.235,
+      "min_ms": 18.448,
+      "max_ms": 85.777,
+      "std_ms": 11.897
+    }
+  },
+  "bottleneck_analysis": {
+    "primary_bottleneck": "MODEL_INFERENCE",
+    "primary_bottleneck_share_pct": 92.6,
+    "component_shares": {
+      "FEATURE_EXTRACTION": {
+        "latency_ms": 0.293,
+        "share_pct": 0.9
+      },
+      "MODEL_INFERENCE": {
+        "latency_ms": 30.392,
+        "share_pct": 92.6
+      },
+      "DATABASE_LATENCY": {
+        "latency_ms": 1.798,
+        "share_pct": 5.5
+      },
+      "PIPELINE_OVERHEAD": {
+        "latency_ms": 0.346,
+        "share_pct": 1.1
+      }
+    },
+    "occurrence_distribution_pct": {
+      "FEATURE_EXTRACTION": 0.0,
+      "MODEL_INFERENCE": 100.0,
+      "DATABASE_LATENCY": 0.0,
+      "PIPELINE_OVERHEAD": 0.0
+    }
+  },
+  "sla_compliance": {
+    "target_p95_ms": 50.0,
+    "measured_p95_ms": 54.177,
+    "sla_met": false
+  }
+}

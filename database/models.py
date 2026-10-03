@@ -31,6 +31,11 @@ class PredictionRecord(Base):
     risk_level = Column(String(16), nullable=False)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), index=True)
     model_version = Column(String(32), default="v1.0.0", nullable=False)
+    feature_extraction_ms = Column(Float, nullable=True)
+    model_inference_ms = Column(Float, nullable=True)
+    db_latency_ms = Column(Float, nullable=True)
+    api_response_time_ms = Column(Float, nullable=True)
+    bottleneck = Column(String(32), nullable=True)
 
     def to_dict(self):
         return {
@@ -41,5 +46,10 @@ class PredictionRecord(Base):
             "risk_level": self.risk_level,
             "action": "ALLOW" if self.risk_level == "LOW" else ("CAUTION" if self.risk_level == "MEDIUM" else "BLOCK"),
             "created_at": self.created_at.isoformat() if self.created_at else datetime.now(timezone.utc).isoformat(),
-            "model_version": self.model_version
+            "model_version": self.model_version,
+            "feature_extraction_ms": round(float(self.feature_extraction_ms), 3) if self.feature_extraction_ms is not None else None,
+            "model_inference_ms": round(float(self.model_inference_ms), 3) if self.model_inference_ms is not None else None,
+            "db_latency_ms": round(float(self.db_latency_ms), 3) if self.db_latency_ms is not None else None,
+            "api_response_time_ms": round(float(self.api_response_time_ms), 3) if self.api_response_time_ms is not None else None,
+            "bottleneck": self.bottleneck
         }

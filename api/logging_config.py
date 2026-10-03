@@ -112,8 +112,11 @@ class StructuredJSONFormatter(logging.Formatter):
         if prediction_result is not None:
             log_payload["prediction_result"] = prediction_result
 
-        # Extra operational telemetry
-        for attr in ("status_code", "total_latency_ms", "client_ip", "sanitized_url"):
+        # Extra operational telemetry & Phase 25 subsystem performance tracking
+        for attr in (
+            "status_code", "total_latency_ms", "client_ip", "sanitized_url",
+            "feature_extraction_time_ms", "database_latency_ms", "api_response_time_ms", "bottleneck"
+        ):
             val = getattr(record, attr, None)
             if val is not None:
                 log_payload[attr] = val

@@ -51,6 +51,11 @@ class StructuredLoggingMiddleware(BaseHTTPMiddleware):
             sanitized_url = getattr(request.state, "sanitized_url", None)
             client_ip = request.client.host if request.client else "unknown"
 
+            # Phase 25: Subsystem latency decomposition
+            feature_extraction_ms = getattr(request.state, "feature_extraction_time", None)
+            database_latency_ms = getattr(request.state, "database_latency", None)
+            bottleneck = getattr(request.state, "bottleneck", None)
+
             # 4. Construct log extra fields
             extra = {
                 "request_id": request_id,
@@ -67,6 +72,12 @@ class StructuredLoggingMiddleware(BaseHTTPMiddleware):
                 extra["prediction_result"] = prediction_result
             if sanitized_url is not None:
                 extra["sanitized_url"] = sanitized_url
+            if feature_extraction_ms is not None:
+                extra["feature_extraction_time_ms"] = feature_extraction_ms
+            if database_latency_ms is not None:
+                extra["database_latency_ms"] = database_latency_ms
+            if bottleneck is not None:
+                extra["bottleneck"] = bottleneck
 
             # 5. Emit structured JSON log
             log_level = logger.error if (status_code >= 500 or exception_caught) else (logger.warning if status_code >= 400 else logger.info)
@@ -75,8 +86,17 @@ class StructuredLoggingMiddleware(BaseHTTPMiddleware):
                 extra=extra
             )
 
-        # 6. Inject X-Request-ID into response headers for client tracing
+        # 6. Inject X-Request-ID and Phase 25 performance telemetry headers into response
         if response is not None:
             response.headers["X-Request-ID"] = request_id
+            response.headers["X-Total-Response-Time-MS"] = str(total_duration_ms)
+            if feature_extraction_ms is not None:
+                response.headers["X-Feature-Extraction-Time-MS"] = str(feature_extraction_ms)
+            if prediction_latency is not None:
+                response.headers["X-Model-Inference-Time-MS"] = str(prediction_latency)
+            if database_latency_ms is not None:
+                response.headers["X-Database-Latency-MS"] = str(database_latency_ms)
+            if bottleneck is not None:
+                response.headers["X-Identified-Bottleneck"] = str(bottleneck)
 
         return response

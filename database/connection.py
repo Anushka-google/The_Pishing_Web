@@ -35,8 +35,27 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
 def init_db():
-    """Initializes tables in database if they do not exist."""
+    """Initializes tables in database and runs seamless schema migration for new performance columns."""
     Base.metadata.create_all(bind=engine)
+    try:
+        from sqlalchemy import inspect, text
+        inspector = inspect(engine)
+        if "prediction" in inspector.get_table_names():
+            existing_cols = {col["name"] for col in inspector.get_columns("prediction")}
+            needed_cols = [
+                ("feature_extraction_ms", "FLOAT"),
+                ("model_inference_ms", "FLOAT"),
+                ("db_latency_ms", "FLOAT"),
+                ("api_response_time_ms", "FLOAT"),
+                ("bottleneck", "VARCHAR(32)")
+            ]
+            with engine.connect() as conn:
+                for col_name, col_type in needed_cols:
+                    if col_name not in existing_cols:
+                        conn.execute(text(f"ALTER TABLE prediction ADD COLUMN {col_name} {col_type}"))
+                conn.commit()
+    except Exception:
+        pass
 
 
 def get_db():

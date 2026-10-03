@@ -71,12 +71,41 @@ class ExplanationData(BaseModel):
     narrative_mitigators: List[str] = []
 
 
+class PerformanceDistribution(BaseModel):
+    mean_ms: float
+    median_p50_ms: float
+    p90_ms: float
+    p95_ms: float
+    p99_ms: float
+    min_ms: float
+    max_ms: float
+    std_ms: float
+
+
+class PerformanceResponse(BaseModel):
+    status: str = "success"
+    model_version: str
+    model_name: str
+    feature_extraction: PerformanceDistribution
+    model_inference: PerformanceDistribution
+    database_latency: PerformanceDistribution
+    api_response_time: PerformanceDistribution
+    primary_bottleneck: str
+    primary_bottleneck_share_pct: float
+    sla_compliance: Dict[str, Any]
+    live_database_telemetry: Optional[Dict[str, Any]] = None
+
+
 class LatencyMetadata(BaseModel):
     model_name: str
     model_version: str
     feature_extraction_time_ms: float
     model_inference_time_ms: float
+    database_latency_ms: float = 0.0
+    api_response_time_ms: float = 0.0
     total_latency_ms: float
+    bottleneck: Optional[str] = None
+    performance_breakdown: Optional[Dict[str, Any]] = None
 
 
 class ThresholdMetadata(BaseModel):
@@ -107,6 +136,11 @@ class HistoryRecord(BaseModel):
     action: str
     created_at: str
     model_version: str
+    feature_extraction_ms: Optional[float] = None
+    model_inference_ms: Optional[float] = None
+    db_latency_ms: Optional[float] = None
+    api_response_time_ms: Optional[float] = None
+    bottleneck: Optional[str] = None
 
 
 class HistoryResponse(BaseModel):

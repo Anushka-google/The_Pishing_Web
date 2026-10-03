@@ -9,19 +9,23 @@ Endpoints:
 - GET  /stats    : Real-time telemetry, threat distribution, and latency statistics
 """
 
+import os
+import json
 import uuid
 import time
 from datetime import datetime, timezone
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from sqlalchemy.orm import Session
 
 from api.schemas import (
     PredictRequest, PredictResponse, HistoryResponse,
     HistoryRecord, StatsResponse, HealthResponse,
-    ModelVersionsResponse, ModelSwitchRequest, ModelSwitchResponse, ModelVersionItem
+    ModelVersionsResponse, ModelSwitchRequest, ModelSwitchResponse, ModelVersionItem,
+    PerformanceResponse, PerformanceDistribution
 )
 from src.prediction.predict import ProductionPredictor
+from src.evaluation.performance_profiler import identify_bottleneck, SystemPerformanceProfiler
 from database.connection import get_db
 from database.repository import PredictionRepository
 from api.logging_config import logger, sanitize_url
@@ -73,39 +77,19 @@ async def predict_url(
     - Attributes risk signals via SHAP TreeExplainer
     - Archives record in PostgreSQL / Database for audit telemetry
     """
+    t_req_start = time.perf_counter()
     try:
         predictor = get_predictor()
         result = predictor.predict(payload.url, include_explanation=include_explanation)
 
-        # Operational telemetry and privacy-preserving sanitization
-        sanitized_url = sanitize_url(payload.url)
-        model_ver = result["metadata"]["model_version"]
+        # Phase 25: Extract individual subsystem metrics
+        feat_latency = result["metadata"]["feature_extraction_time_ms"]
         inf_latency = result["metadata"]["model_inference_time_ms"]
-        pred_summary = {
-            "prediction": result["prediction"],
-            "risk_level": result["risk_level"],
-            "probability": result["probability"]
-        }
+        model_ver = result["metadata"]["model_version"]
 
-        request.state.sanitized_url = sanitized_url
-        request.state.model_version = model_ver
-        request.state.prediction_latency = inf_latency
-        request.state.prediction_result = pred_summary
-
-        # Emit explicit structured operational log
-        logger.info(
-            f"Prediction completed: {result['prediction'].upper()} ({result['risk_level']})",
-            extra={
-                "request_id": getattr(request.state, "request_id", None),
-                "endpoint": "POST /predict",
-                "model_version": model_ver,
-                "prediction_latency": inf_latency,
-                "prediction_result": pred_summary,
-                "sanitized_url": sanitized_url
-            }
-        )
-
-        # 1. Store in Database
+        # 1. Store in Database & measure exact Database latency
+        t_db_start = time.perf_counter()
+        db_record = None
         try:
             db_record = PredictionRepository.create_record(
                 db=db,
@@ -113,15 +97,83 @@ async def predict_url(
                 prediction=result["prediction"],
                 probability=result["probability"],
                 risk_level=result["risk_level"],
-                model_version=result["metadata"]["model_version"]
+                model_version=result["metadata"]["model_version"],
+                feature_extraction_ms=feat_latency,
+                model_inference_ms=inf_latency
             )
             record_id = str(db_record.id)
             timestamp_iso = db_record.created_at.isoformat() if db_record.created_at else datetime.now(timezone.utc).isoformat()
         except Exception as db_err:
             record_id = str(uuid.uuid4())
             timestamp_iso = datetime.now(timezone.utc).isoformat()
+        t_db_end = time.perf_counter()
+        db_latency = round((t_db_end - t_db_start) * 1000.0, 3)
 
-        # 2. Maintain fast in-memory cache
+        # 2. Total API response time for endpoint
+        t_req_end = time.perf_counter()
+        api_resp_time = round((t_req_end - t_req_start) * 1000.0, 3)
+
+        # 3. Identify subsystem bottleneck
+        b_info = identify_bottleneck(
+            feature_extraction_ms=feat_latency,
+            model_inference_ms=inf_latency,
+            database_latency_ms=db_latency,
+            api_response_time_ms=api_resp_time
+        )
+        bottleneck = b_info["bottleneck"]
+
+        # Backfill DB record with finalized DB/API times and bottleneck
+        if db_record is not None:
+            try:
+                db_record.db_latency_ms = db_latency
+                db_record.api_response_time_ms = api_resp_time
+                db_record.bottleneck = bottleneck
+                db.commit()
+            except Exception:
+                pass
+
+        # Update metadata dictionary
+        result["metadata"]["database_latency_ms"] = db_latency
+        result["metadata"]["api_response_time_ms"] = api_resp_time
+        result["metadata"]["bottleneck"] = bottleneck
+        result["metadata"]["performance_breakdown"] = b_info["components"]
+
+        # Operational telemetry and privacy-preserving sanitization
+        sanitized_url = sanitize_url(payload.url)
+        pred_summary = {
+            "prediction": result["prediction"],
+            "risk_level": result["risk_level"],
+            "probability": result["probability"]
+        }
+
+        # Propagate to request.state for StructuredLoggingMiddleware
+        request.state.sanitized_url = sanitized_url
+        request.state.model_version = model_ver
+        request.state.feature_extraction_time = feat_latency
+        request.state.prediction_latency = inf_latency
+        request.state.database_latency = db_latency
+        request.state.api_response_time = api_resp_time
+        request.state.bottleneck = bottleneck
+        request.state.prediction_result = pred_summary
+
+        # Emit explicit structured operational log with Phase 25 metrics
+        logger.info(
+            f"Prediction completed: {result['prediction'].upper()} ({result['risk_level']}) | Bottleneck: {bottleneck}",
+            extra={
+                "request_id": getattr(request.state, "request_id", None),
+                "endpoint": "POST /predict",
+                "model_version": model_ver,
+                "feature_extraction_time_ms": feat_latency,
+                "prediction_latency": inf_latency,
+                "database_latency_ms": db_latency,
+                "api_response_time_ms": api_resp_time,
+                "bottleneck": bottleneck,
+                "prediction_result": pred_summary,
+                "sanitized_url": sanitized_url
+            }
+        )
+
+        # 4. Maintain fast in-memory cache
         history_entry = {
             "id": record_id,
             "url": result["url"],
@@ -131,7 +183,12 @@ async def predict_url(
             "action": result["action"],
             "created_at": timestamp_iso,
             "model_version": result["metadata"]["model_version"],
-            "latency_ms": result["metadata"]["total_latency_ms"]
+            "latency_ms": result["metadata"]["total_latency_ms"],
+            "feature_extraction_ms": feat_latency,
+            "model_inference_ms": inf_latency,
+            "db_latency_ms": db_latency,
+            "api_response_time_ms": api_resp_time,
+            "bottleneck": bottleneck
         }
         _scan_history.insert(0, history_entry)
         if len(_scan_history) > 1000:
@@ -166,7 +223,12 @@ async def get_history(
                     risk_level=r.risk_level,
                     action="ALLOW" if r.risk_level == "LOW" else ("CAUTION" if r.risk_level == "MEDIUM" else "BLOCK"),
                     created_at=r.created_at.isoformat() if r.created_at else "",
-                    model_version=r.model_version
+                    model_version=r.model_version,
+                    feature_extraction_ms=r.feature_extraction_ms,
+                    model_inference_ms=r.model_inference_ms,
+                    db_latency_ms=r.db_latency_ms,
+                    api_response_time_ms=r.api_response_time_ms,
+                    bottleneck=r.bottleneck
                 )
                 for r in db_records
             ]
@@ -188,7 +250,12 @@ async def get_history(
             risk_level=r["risk_level"],
             action=r["action"],
             created_at=r["created_at"],
-            model_version=r["model_version"]
+            model_version=r["model_version"],
+            feature_extraction_ms=r.get("feature_extraction_ms"),
+            model_inference_ms=r.get("model_inference_ms"),
+            db_latency_ms=r.get("db_latency_ms"),
+            api_response_time_ms=r.get("api_response_time_ms"),
+            bottleneck=r.get("bottleneck")
         )
         for r in records
     ]
@@ -334,3 +401,50 @@ async def rollback_model_version(request: Request):
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Failed to rollback model version: {str(e)}"
         )
+
+
+@router.get("/performance", response_model=PerformanceResponse, tags=["Analytics"])
+async def get_performance_telemetry(request: Request, db: Session = Depends(get_db)):
+    """
+    Returns empirical subsystem performance benchmarks across:
+    - Feature extraction time
+    - Model inference time
+    - Database latency
+    - API response time
+    Includes bottleneck analysis and live database telemetry.
+    """
+    predictor = get_predictor()
+    request.state.model_version = predictor.model_version
+
+    report_file = "data/processed/performance_metrics.json"
+    if os.path.exists(report_file):
+        try:
+            with open(report_file, "r", encoding="utf-8") as f:
+                data = json.load(f)
+        except Exception:
+            profiler = SystemPerformanceProfiler(predictor=predictor)
+            data = profiler.benchmark_subsystems(iterations=50, warmup_runs=5)
+    else:
+        profiler = SystemPerformanceProfiler(predictor=predictor)
+        data = profiler.benchmark_subsystems(iterations=50, warmup_runs=5)
+        try:
+            profiler.save_report(data, report_file)
+        except Exception:
+            pass
+
+    # Fetch live DB performance telemetry
+    db_telemetry = PredictionRepository.get_performance_telemetry(db)
+
+    return PerformanceResponse(
+        status="success",
+        model_version=predictor.model_version,
+        model_name=predictor.model_name,
+        feature_extraction=PerformanceDistribution(**data["subsystems"]["feature_extraction"]),
+        model_inference=PerformanceDistribution(**data["subsystems"]["model_inference"]),
+        database_latency=PerformanceDistribution(**data["subsystems"]["database_latency"]),
+        api_response_time=PerformanceDistribution(**data["subsystems"]["api_response_time"]),
+        primary_bottleneck=data["bottleneck_analysis"]["primary_bottleneck"],
+        primary_bottleneck_share_pct=data["bottleneck_analysis"]["primary_bottleneck_share_pct"],
+        sla_compliance=data["sla_compliance"],
+        live_database_telemetry=db_telemetry
+    )

@@ -59,7 +59,7 @@ Risk Engine (Calibrated Probability → LOW / MEDIUM / HIGH + SHAP Explanations)
 | **22** | **MLflow Experiment Tracking & Registry** | ✅ Completed | [MLflow Spec](docs/phase_22_mlflow_tracking.md) & [Tracker Code](src/training/mlflow_tracker.py) |
 | **23** | **Model Versioning & Dynamic Rollback** | ✅ Completed | [Model Versioning Spec](docs/phase_23_model_versioning.md) & [Version Manager](src/models/version_manager.py) |
 | **24** | **Structured Operational Logging** | ✅ Completed | [Logging Spec](docs/phase_24_structured_logging.md) & [Logging Middleware](api/middleware.py) |
-| **25** | Latency & Performance Measurement| ⏳ Pending | Benchmarks across extraction, inference, DB |
+| **25** | **Latency & Performance Measurement** | ✅ Completed | [Performance Spec](docs/phase_25_performance_measurement.md) & [Profiler](src/evaluation/performance_profiler.py) |
 | **26** | Cloud Deployment | ⏳ Pending | Cloud-ready deployment setup |
 | **27** | Production Monitoring & Drift | ⏳ Pending | Data drift detection & operational metrics |
 | **28** | Active Feedback Loop | ⏳ Pending | Retraining workflow & validation cycles |
