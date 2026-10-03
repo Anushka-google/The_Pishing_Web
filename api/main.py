@@ -14,20 +14,22 @@ from fastapi.exceptions import RequestValidationError
 
 from api.routes import router, get_predictor
 from database.connection import init_db
+from api.middleware import StructuredLoggingMiddleware
+from api.logging_config import logger
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Initialize database tables
-    print("Initializing Database schema (PostgreSQL / SQLite)...")
+    logger.info("Initializing Database schema (PostgreSQL / SQLite)...")
     init_db()
 
     # Pre-warm model and SHAP explainer on startup
-    print("Pre-warming Phishing Detection Engine & SHAP TreeExplainer...")
+    logger.info("Pre-warming Phishing Detection Engine & SHAP TreeExplainer...")
     predictor = get_predictor()
     # Execute a lightweight dummy prediction to trigger JIT / cache compilation
     predictor.predict("https://www.example.com", include_explanation=False)
-    print(f"Engine pre-warmed successfully. Ready for inference with {predictor.model_name}.")
+    logger.info(f"Engine pre-warmed successfully. Ready for inference with {predictor.model_name} ({predictor.model_version}).")
     yield
 
 
@@ -43,6 +45,9 @@ app = FastAPI(
     redoc_url="/redoc",
     lifespan=lifespan
 )
+
+# Phase 24: Structured JSON request logging & X-Request-ID correlation
+app.add_middleware(StructuredLoggingMiddleware)
 
 # Enable CORS for React Frontend & browser extensions
 app.add_middleware(

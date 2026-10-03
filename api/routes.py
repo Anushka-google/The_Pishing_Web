@@ -13,7 +13,7 @@ import uuid
 import time
 from datetime import datetime, timezone
 from typing import List, Dict, Any
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from sqlalchemy.orm import Session
 
 from api.schemas import (
@@ -24,6 +24,7 @@ from api.schemas import (
 from src.prediction.predict import ProductionPredictor
 from database.connection import get_db
 from database.repository import PredictionRepository
+from api.logging_config import logger, sanitize_url
 
 router = APIRouter()
 
@@ -41,10 +42,11 @@ def get_predictor() -> ProductionPredictor:
 
 
 @router.get("/health", response_model=HealthResponse, tags=["Health"])
-async def health_check():
+async def health_check(request: Request):
     """Verifies service readiness and model availability."""
     predictor = get_predictor()
     uptime = time.time() - START_TIME
+    request.state.model_version = predictor.model_version
     return HealthResponse(
         status="healthy",
         service="Phishing Detection & Risk Intelligence Engine",
@@ -59,6 +61,7 @@ async def health_check():
 @router.post("/predict", response_model=PredictResponse, status_code=status.HTTP_200_OK, tags=["Inference"])
 async def predict_url(
     payload: PredictRequest,
+    request: Request,
     include_explanation: bool = True,
     db: Session = Depends(get_db)
 ):
@@ -73,6 +76,34 @@ async def predict_url(
     try:
         predictor = get_predictor()
         result = predictor.predict(payload.url, include_explanation=include_explanation)
+
+        # Operational telemetry and privacy-preserving sanitization
+        sanitized_url = sanitize_url(payload.url)
+        model_ver = result["metadata"]["model_version"]
+        inf_latency = result["metadata"]["model_inference_time_ms"]
+        pred_summary = {
+            "prediction": result["prediction"],
+            "risk_level": result["risk_level"],
+            "probability": result["probability"]
+        }
+
+        request.state.sanitized_url = sanitized_url
+        request.state.model_version = model_ver
+        request.state.prediction_latency = inf_latency
+        request.state.prediction_result = pred_summary
+
+        # Emit explicit structured operational log
+        logger.info(
+            f"Prediction completed: {result['prediction'].upper()} ({result['risk_level']})",
+            extra={
+                "request_id": getattr(request.state, "request_id", None),
+                "endpoint": "POST /predict",
+                "model_version": model_ver,
+                "prediction_latency": inf_latency,
+                "prediction_result": pred_summary,
+                "sanitized_url": sanitized_url
+            }
+        )
 
         # 1. Store in Database
         try:
@@ -116,10 +147,13 @@ async def predict_url(
 
 @router.get("/history", response_model=HistoryResponse, tags=["History"])
 async def get_history(
+    request: Request,
     limit: int = Query(default=50, ge=1, le=200),
     db: Session = Depends(get_db)
 ):
     """Retrieves chronological log of scanned URLs and risk assessments from PostgreSQL / DB."""
+    predictor = get_predictor()
+    request.state.model_version = predictor.model_version
     try:
         db_records = PredictionRepository.get_history(db, limit=limit)
         if db_records:
@@ -165,8 +199,10 @@ async def get_history(
 
 
 @router.get("/stats", response_model=StatsResponse, tags=["Analytics"])
-async def get_statistics(db: Session = Depends(get_db)):
+async def get_statistics(request: Request, db: Session = Depends(get_db)):
     """Aggregates system-wide telemetry, threat ratios, and operational latencies."""
+    predictor = get_predictor()
+    request.state.model_version = predictor.model_version
     try:
         stats = PredictionRepository.get_stats(db)
         if stats["total_scans"] > 0:
@@ -206,12 +242,13 @@ async def get_statistics(db: Session = Depends(get_db)):
 
 
 @router.get("/model/versions", response_model=ModelVersionsResponse, tags=["Model Governance"])
-async def get_model_versions():
+async def get_model_versions(request: Request):
     """Returns all available model versions (v1, v2, v3), active status, and evaluation metrics."""
     predictor = get_predictor()
     manifest = predictor.manager.manifest
     active_v = manifest.get("active_version", predictor.model_version)
     prev_v = manifest.get("previous_version")
+    request.state.model_version = active_v
 
     version_items = []
     for v_id, meta in manifest.get("versions", {}).items():
@@ -235,7 +272,7 @@ async def get_model_versions():
 
 
 @router.post("/model/switch", response_model=ModelSwitchResponse, tags=["Model Governance"])
-async def switch_model_version(payload: ModelSwitchRequest):
+async def switch_model_version(payload: ModelSwitchRequest, request: Request):
     """
     Dynamically activates a specific model version ('v1', 'v2', 'v3').
     Enables live model promotion, validation, and zero-downtime hot-swapping.
@@ -243,6 +280,15 @@ async def switch_model_version(payload: ModelSwitchRequest):
     predictor = get_predictor()
     try:
         info = predictor.switch_version(payload.version)
+        request.state.model_version = info["version"]
+        logger.info(
+            f"Model version switched to {info['version']}",
+            extra={
+                "request_id": getattr(request.state, "request_id", None),
+                "endpoint": "POST /model/switch",
+                "model_version": info["version"]
+            }
+        )
         return ModelSwitchResponse(
             status="success",
             active_version=info["version"],
@@ -258,7 +304,7 @@ async def switch_model_version(payload: ModelSwitchRequest):
 
 
 @router.post("/model/rollback", response_model=ModelSwitchResponse, tags=["Model Governance"])
-async def rollback_model_version():
+async def rollback_model_version(request: Request):
     """
     Rolls back the active model to the predecessor version in case of drift, latency anomalies, or regressions.
     Sequence: v3 -> v2 -> v1.
@@ -267,6 +313,15 @@ async def rollback_model_version():
     try:
         new_v = predictor.rollback()
         info = predictor.manager.get_version_info(new_v)
+        request.state.model_version = new_v
+        logger.info(
+            f"Model version rolled back to {new_v}",
+            extra={
+                "request_id": getattr(request.state, "request_id", None),
+                "endpoint": "POST /model/rollback",
+                "model_version": new_v
+            }
+        )
         return ModelSwitchResponse(
             status="success",
             active_version=new_v,
