@@ -29,8 +29,6 @@ class PhishingExplainer:
     ):
         self.model_path = model_path
         self.features_csv = features_csv
-        self.feature_names = FeatureExtractor.FEATURE_NAMES
-        self.extractor = FeatureExtractor()
 
         if not os.path.exists(model_path):
             raise FileNotFoundError(f"Champion model not found at {model_path}")
@@ -38,6 +36,9 @@ class PhishingExplainer:
         self.pkg = joblib.load(model_path)
         self.model = self.pkg["model"]
         self.scaler = self.pkg.get("scaler")
+        self.feature_names = self.pkg.get("feature_names", FeatureExtractor.FEATURE_NAMES)
+        feature_set = "improved" if len(self.feature_names) > 22 else "base"
+        self.extractor = FeatureExtractor(feature_set=feature_set)
         self.thresholds = self.pkg.get("thresholds", {"t1_low": 0.40, "t2_high": 0.65, "t_optimal": 0.50})
 
         # Initialize SHAP TreeExplainer

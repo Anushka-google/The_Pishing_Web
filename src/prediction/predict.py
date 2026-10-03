@@ -14,31 +14,56 @@ import sys
 import time
 from typing import Dict, Any, List, Optional
 import numpy as np
+import pandas as pd
 import joblib
 
 from src.features.extractor import FeatureExtractor
 from src.explanation.shap_explainer import PhishingExplainer
+from src.models.version_manager import ModelVersionManager
 
 
 class ProductionPredictor:
     def __init__(
         self,
-        model_path: str = "models/champion_phishing_model.joblib",
+        model_path: Optional[str] = None,
+        version: Optional[str] = None,
         enable_shap: bool = True
     ):
-        self.model_path = model_path
         self.enable_shap = enable_shap
-        self.feature_names = FeatureExtractor.FEATURE_NAMES
-        self.extractor = FeatureExtractor()
+        self.manager = ModelVersionManager()
 
-        if not os.path.exists(model_path):
-            raise FileNotFoundError(f"Trained model artifact not found at: {model_path}")
+        if version is not None:
+            self.model_version = version
+            self.model_path = self.manager.get_version_info(version)["artifact_path"]
+        elif model_path is not None:
+            self.model_path = model_path
+            self.model_version = None
+        else:
+            active_info = self.manager.get_active_version_info()
+            self.model_path = active_info["artifact_path"]
+            self.model_version = active_info["version"]
 
-        self.pkg = joblib.load(model_path)
+        self._explainer: Optional[PhishingExplainer] = None
+        self._load_model_bundle()
+
+    def _load_model_bundle(self):
+        if not os.path.exists(self.model_path):
+            champion_fallback = "models/champion_phishing_model.joblib"
+            if os.path.exists(champion_fallback):
+                self.model_path = champion_fallback
+            else:
+                raise FileNotFoundError(f"Trained model artifact not found at: {self.model_path}")
+
+        self.pkg = joblib.load(self.model_path)
         self.model = self.pkg["model"]
         self.scaler = self.pkg.get("scaler")
         self.model_name = self.pkg.get("model_name", "RandomForestClassifier")
-        self.model_version = self.pkg.get("model_version", "v1.0.0")
+        self.model_version = self.pkg.get("model_version", self.model_version or "v1")
+        self.feature_names = self.pkg.get("feature_names", FeatureExtractor.FEATURE_NAMES)
+
+        # Automatically select appropriate feature extractor configuration
+        feature_set = "improved" if len(self.feature_names) > 22 else "base"
+        self.extractor = FeatureExtractor(feature_set=feature_set)
 
         # Load calibrated thresholds
         thresholds = self.pkg.get("thresholds", {})
@@ -46,8 +71,25 @@ class ProductionPredictor:
         self.t2_high = float(thresholds.get("t2_high", 0.65))
         self.t_optimal = float(thresholds.get("t_optimal", 0.50))
 
-        # Lazy load SHAP explainer for inference speed if needed
-        self._explainer: Optional[PhishingExplainer] = None
+        # Invalidate cached explainer to bind to current weights
+        self._explainer = None
+
+    def switch_version(self, target_version: str) -> Dict[str, Any]:
+        """Dynamically hot-swaps active production model version with zero downtime."""
+        info = self.manager.set_active_version(target_version)
+        self.model_path = info["artifact_path"]
+        self.model_version = info["version"]
+        self._load_model_bundle()
+        return info
+
+    def rollback(self) -> str:
+        """Rolls back to the previous model version dynamically."""
+        new_version = self.manager.rollback()
+        info = self.manager.get_version_info(new_version)
+        self.model_path = info["artifact_path"]
+        self.model_version = info["version"]
+        self._load_model_bundle()
+        return new_version
 
     @property
     def explainer(self) -> PhishingExplainer:
@@ -65,10 +107,12 @@ class ProductionPredictor:
         vector = np.array([raw_feature_dict[name] for name in self.feature_names], dtype=np.float32).reshape(1, -1)
         feat_time_ms = (time.perf_counter() - t_feat0) * 1000
 
-        # 2. Scaling (if applicable)
-        X = vector
+        # 2. Scaling (if applicable) and DataFrame formatting
         if self.scaler is not None:
-            X = self.scaler.transform(X)
+            scaled = self.scaler.transform(vector)
+            X = pd.DataFrame(scaled, columns=self.feature_names)
+        else:
+            X = pd.DataFrame(vector, columns=self.feature_names)
 
         # 3. Model Inference
         t_inf0 = time.perf_counter()

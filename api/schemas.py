@@ -129,4 +129,35 @@ class HealthResponse(BaseModel):
     version: str
     model_loaded: bool
     model_name: str
+    model_version: str = "v2"
     uptime_seconds: float
+
+
+class ModelVersionItem(BaseModel):
+    version: str
+    model_name: str
+    architecture: str
+    feature_count: int
+    feature_names: List[str] = []
+    description: str
+    is_active: bool
+    created_at: str
+    metrics: Dict[str, Any] = {}
+
+
+class ModelVersionsResponse(BaseModel):
+    active_version: str
+    previous_version: Optional[str] = None
+    versions: List[ModelVersionItem]
+
+
+class ModelSwitchRequest(BaseModel):
+    version: str = Field(..., description="Target model version to activate ('v1', 'v2', 'v3').", examples=["v1", "v2", "v3"])
+
+
+class ModelSwitchResponse(BaseModel):
+    status: str
+    active_version: str
+    model_name: str
+    feature_count: int
+    message: str

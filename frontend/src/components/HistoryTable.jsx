@@ -58,6 +58,7 @@ export default function HistoryTable({ history, onRefresh, onSelectUrl, isLoadin
                 <th style={{ padding: '0.75rem 0.5rem' }}>Inspected URL</th>
                 <th style={{ padding: '0.75rem 0.5rem' }}>Risk Level</th>
                 <th style={{ padding: '0.75rem 0.5rem' }}>Probability</th>
+                <th style={{ padding: '0.75rem 0.5rem' }}>Model</th>
                 <th style={{ padding: '0.75rem 0.5rem' }}>Action</th>
               </tr>
             </thead>
@@ -91,6 +92,20 @@ export default function HistoryTable({ history, onRefresh, onSelectUrl, isLoadin
                   </td>
                   <td style={{ padding: '0.75rem 0.5rem', fontFamily: 'monospace', fontWeight: '600', color: item.risk_level === 'HIGH' ? '#ef4444' : (item.risk_level === 'MEDIUM' ? '#f59e0b' : '#10b981') }}>
                     {Math.round(item.probability * 100)}%
+                  </td>
+                  <td style={{ padding: '0.75rem 0.5rem' }}>
+                    <span style={{
+                      padding: '0.15rem 0.45rem',
+                      borderRadius: '4px',
+                      fontSize: '0.75rem',
+                      fontFamily: 'monospace',
+                      fontWeight: '600',
+                      background: '#1e293b',
+                      color: '#38bdf8',
+                      border: '1px solid #334155'
+                    }}>
+                      {item.model_version || 'v2'}
+                    </span>
                   </td>
                   <td style={{ padding: '0.75rem 0.5rem' }}>
                     <button

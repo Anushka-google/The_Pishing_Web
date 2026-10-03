@@ -18,7 +18,8 @@ from sqlalchemy.orm import Session
 
 from api.schemas import (
     PredictRequest, PredictResponse, HistoryResponse,
-    HistoryRecord, StatsResponse, HealthResponse
+    HistoryRecord, StatsResponse, HealthResponse,
+    ModelVersionsResponse, ModelSwitchRequest, ModelSwitchResponse, ModelVersionItem
 )
 from src.prediction.predict import ProductionPredictor
 from database.connection import get_db
@@ -50,6 +51,7 @@ async def health_check():
         version="1.0.0",
         model_loaded=predictor.model is not None,
         model_name=predictor.model_name,
+        model_version=predictor.model_version,
         uptime_seconds=round(uptime, 2)
     )
 
@@ -202,11 +204,78 @@ async def get_statistics(db: Session = Depends(get_db)):
         risk_distribution=risk_counts
     )
 
-    return StatsResponse(
-        total_scans=total,
-        phishing_detected=phish_count,
-        legitimate_detected=legit_count,
-        phishing_rate_pct=phish_pct,
-        avg_latency_ms=avg_latency,
-        risk_distribution=risk_counts
+
+@router.get("/model/versions", response_model=ModelVersionsResponse, tags=["Model Governance"])
+async def get_model_versions():
+    """Returns all available model versions (v1, v2, v3), active status, and evaluation metrics."""
+    predictor = get_predictor()
+    manifest = predictor.manager.manifest
+    active_v = manifest.get("active_version", predictor.model_version)
+    prev_v = manifest.get("previous_version")
+
+    version_items = []
+    for v_id, meta in manifest.get("versions", {}).items():
+        version_items.append(ModelVersionItem(
+            version=meta["version"],
+            model_name=meta["model_name"],
+            architecture=meta.get("architecture", "TreeEnsemble"),
+            feature_count=meta.get("feature_count", 22),
+            feature_names=meta.get("feature_names", []),
+            description=meta.get("description", ""),
+            is_active=(meta["version"] == active_v),
+            created_at=meta.get("created_at", datetime.now(timezone.utc).isoformat()),
+            metrics=meta.get("metrics", {})
+        ))
+
+    return ModelVersionsResponse(
+        active_version=active_v,
+        previous_version=prev_v,
+        versions=version_items
     )
+
+
+@router.post("/model/switch", response_model=ModelSwitchResponse, tags=["Model Governance"])
+async def switch_model_version(payload: ModelSwitchRequest):
+    """
+    Dynamically activates a specific model version ('v1', 'v2', 'v3').
+    Enables live model promotion, validation, and zero-downtime hot-swapping.
+    """
+    predictor = get_predictor()
+    try:
+        info = predictor.switch_version(payload.version)
+        return ModelSwitchResponse(
+            status="success",
+            active_version=info["version"],
+            model_name=info["model_name"],
+            feature_count=info.get("feature_count", 22),
+            message=f"Production model successfully hot-swapped to {info['version']} ({info['model_name']})."
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Failed to switch model version: {str(e)}"
+        )
+
+
+@router.post("/model/rollback", response_model=ModelSwitchResponse, tags=["Model Governance"])
+async def rollback_model_version():
+    """
+    Rolls back the active model to the predecessor version in case of drift, latency anomalies, or regressions.
+    Sequence: v3 -> v2 -> v1.
+    """
+    predictor = get_predictor()
+    try:
+        new_v = predictor.rollback()
+        info = predictor.manager.get_version_info(new_v)
+        return ModelSwitchResponse(
+            status="success",
+            active_version=new_v,
+            model_name=info["model_name"],
+            feature_count=info.get("feature_count", 22),
+            message=f"Production model successfully rolled back to {new_v} ({info['model_name']})."
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Failed to rollback model version: {str(e)}"
+        )

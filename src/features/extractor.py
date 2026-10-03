@@ -47,7 +47,11 @@ class FeatureExtractor:
         "netflix", "wellsfargo", "amazon", "facebook", "coinbase"
     ]
 
-    # Deterministic, ordered feature schema
+    SUSPICIOUS_TLDS = {
+        "xyz", "top", "work", "buzz", "club", "cc", "icu", "cam", "rest", "tk", "ml", "ga", "cf", "gq"
+    }
+
+    # Deterministic, ordered base feature schema (v1 & v2 models: 22 signals)
     FEATURE_NAMES: List[str] = [
         # 1. Length features
         "url_length",
@@ -78,8 +82,22 @@ class FeatureExtractor:
         "domain_entropy"
     ]
 
-    def __init__(self, parser: Optional[URLParser] = None):
+    BASE_FEATURE_NAMES: List[str] = list(FEATURE_NAMES)
+
+    # Phase 23: Improved feature schema (v3 model: 28 signals)
+    IMPROVED_FEATURE_NAMES: List[str] = FEATURE_NAMES + [
+        "digit_ratio",
+        "path_entropy",
+        "has_at_symbol",
+        "suspicious_tld",
+        "hyphen_ratio",
+        "is_https_with_ip"
+    ]
+
+    def __init__(self, parser: Optional[URLParser] = None, feature_set: str = "base"):
         self.parser = parser or URLParser()
+        self.feature_set = feature_set
+        self.active_feature_names = self.IMPROVED_FEATURE_NAMES if feature_set == "improved" else self.FEATURE_NAMES
 
     def extract_features_dict(self, raw_url: str) -> Dict[str, Any]:
         """
@@ -149,19 +167,49 @@ class FeatureExtractor:
             "url_entropy": url_entropy,
             "domain_entropy": domain_entropy
         }
+
+        # 6. Improved Phase 23 Signals (Extended 28 features)
+        if self.feature_set == "improved":
+            digit_ratio = round(float(number_of_digits / max(url_length, 1)), 4)
+            path_entropy = calculate_shannon_entropy(parsed.path)
+            has_at_symbol = 1 if ("@" in url_str or parsed.has_auth) else 0
+            suffix_str = (parsed.suffix or "").lower()
+            suspicious_tld = 1 if suffix_str in self.SUSPICIOUS_TLDS else 0
+            hyphen_ratio = round(float(number_of_hyphens / max(domain_length, 1)), 4)
+            is_https_with_ip = 1 if (uses_https == 1 and has_ip_address == 1) else 0
+
+            features.update({
+                "digit_ratio": digit_ratio,
+                "path_entropy": path_entropy,
+                "has_at_symbol": has_at_symbol,
+                "suspicious_tld": suspicious_tld,
+                "hyphen_ratio": hyphen_ratio,
+                "is_https_with_ip": is_https_with_ip
+            })
+
         return features
 
-    def extract_features_vector(self, raw_url: str) -> np.ndarray:
+    def extract_features_vector(
+        self,
+        raw_url: str,
+        feature_names: Optional[List[str]] = None
+    ) -> np.ndarray:
         """
-        Extracts features as a 1D NumPy array adhering strictly to FEATURE_NAMES ordering.
+        Extracts features as a 1D NumPy array adhering to requested feature_names (or active_feature_names).
         """
         f_dict = self.extract_features_dict(raw_url)
-        vector = [f_dict[name] for name in self.FEATURE_NAMES]
+        names = feature_names or self.active_feature_names
+        vector = [f_dict[name] for name in names]
         return np.array(vector, dtype=np.float32)
 
-    def batch_extract(self, urls: List[str]) -> pd.DataFrame:
+    def batch_extract(
+        self,
+        urls: List[str],
+        feature_names: Optional[List[str]] = None
+    ) -> pd.DataFrame:
         """
         Extracts features for a batch of URLs into a Pandas DataFrame.
         """
+        names = feature_names or self.active_feature_names
         rows = [self.extract_features_dict(u) for u in urls]
-        return pd.DataFrame(rows, columns=self.FEATURE_NAMES)
+        return pd.DataFrame(rows)[names]
