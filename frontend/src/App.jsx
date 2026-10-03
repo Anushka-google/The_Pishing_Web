@@ -6,7 +6,11 @@ import ResultCard from './components/ResultCard';
 import RiskExplanation from './components/RiskExplanation';
 import HistoryTable from './components/HistoryTable';
 
-const API_BASE = 'http://localhost:8000';
+const API_BASE = import.meta.env.VITE_API_URL !== undefined 
+  ? import.meta.env.VITE_API_URL 
+  : (typeof window !== 'undefined' && window.location.hostname === 'localhost' && window.location.port === '5173' 
+      ? 'http://localhost:8000' 
+      : '');
 
 export default function App() {
   const [result, setResult] = useState(null);

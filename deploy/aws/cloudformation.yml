@@ -1,0 +1,223 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >
+  Phishing Detection & Risk Intelligence Platform - Production AWS Infrastructure
+  Deploys a secure, containerized architecture:
+  Internet -> Frontend (React + Nginx :80/:443) -> FastAPI ML Engine (:8000) -> PostgreSQL (:5432)
+
+Parameters:
+  InstanceType:
+    Type: String
+    Default: t3.medium
+    AllowedValues:
+      - t3.small
+      - t3.medium
+      - t3.large
+      - t2.medium
+    Description: EC2 Instance Type for hosting Docker containers.
+
+  KeyName:
+    Type: String
+    Default: ""
+    Description: Optional EC2 Key Pair for SSH terminal access (leave blank if not using SSH).
+
+  SSHLocation:
+    Type: String
+    Default: 0.0.0.0/0
+    Description: The IP address range that can be used to SSH into the EC2 instance.
+
+  RepositoryUrl:
+    Type: String
+    Default: https://github.com/Anushka-google/The_Pishing_Web.git
+    Description: Git repository containing the application code and Dockerfiles.
+
+Resources:
+  # 1. Custom Virtual Private Cloud (VPC)
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: PhishIntel-VPC
+
+  # 2. Internet Gateway
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: PhishIntel-IGW
+
+  VPCGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref InternetGateway
+
+  # 3. Public Subnet
+  PublicSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.1.0/24
+      MapPublicIpOnLaunch: true
+      AvailabilityZone: !Select [0, !GetAZs '']
+      Tags:
+        - Key: Name
+          Value: PhishIntel-PublicSubnet
+
+  # 4. Route Table & Default Route to Internet
+  RouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: PhishIntel-PublicRouteTable
+
+  PublicRoute:
+    Type: AWS::EC2::Route
+    DependsOn: VPCGatewayAttachment
+    Properties:
+      RouteTableId: !Ref RouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+
+  SubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnet
+      RouteTableId: !Ref RouteTable
+
+  # 5. Security Group
+  WebServerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Enable HTTP/HTTPS ingress from public internet and optional SSH
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        # Public Web Traffic to Frontend (Nginx)
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+        # Optional Administrative SSH
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: !Ref SSHLocation
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: PhishIntel-SecurityGroup
+
+  # 6. EC2 Host Instance
+  EC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: !Ref InstanceType
+      KeyName: !If [HasKeyName, !Ref KeyName, !Ref "AWS::NoValue"]
+      SubnetId: !Ref PublicSubnet
+      SecurityGroupIds:
+        - !Ref WebServerSecurityGroup
+      ImageId: ami-0c101f26f147fa7fd # Amazon Linux 2023 (us-east-1 standard; replace per region)
+      BlockDeviceMappings:
+        - DeviceName: /dev/xvda
+          Ebs:
+            VolumeSize: 30
+            VolumeType: gp3
+            DeleteOnTermination: true
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          set -e
+          echo "=== Starting PhishIntel Automated Cloud Deployment ==="
+          
+          # 1. Update OS packages and install Docker + Git
+          dnf update -y
+          dnf install -y docker git curl
+          
+          # 2. Enable and start Docker service
+          systemctl enable docker
+          systemctl start docker
+          usermod -aG docker ec2-user
+          
+          # 3. Install Docker Compose plugin
+          DOCKER_CONFIG=/usr/libexec/docker/cli-plugins
+          mkdir -p $DOCKER_CONFIG
+          curl -SL https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64 -o $DOCKER_CONFIG/docker-compose
+          chmod +x $DOCKER_CONFIG/docker-compose
+          
+          # 4. Clone application repository
+          APP_DIR=/opt/phishintel
+          mkdir -p $APP_DIR
+          git clone ${RepositoryUrl} $APP_DIR
+          cd $APP_DIR
+          
+          # 5. Build and launch production multi-container stack
+          docker compose -f docker-compose.prod.yml up -d --build
+          
+          # 6. Setup systemd service for persistence across reboots
+          cat << 'EOF' > /etc/systemd/system/phishintel.service
+          [Unit]
+          Description=Phishing Intelligence Platform Multi-Container Stack
+          Requires=docker.service
+          After=docker.service
+          
+          [Service]
+          Type=oneshot
+          RemainAfterExit=yes
+          WorkingDirectory=/opt/phishintel
+          ExecStart=/usr/libexec/docker/cli-plugins/docker-compose -f docker-compose.prod.yml up -d
+          ExecStop=/usr/libexec/docker/cli-plugins/docker-compose -f docker-compose.prod.yml down
+          TimeoutStartSec=0
+          
+          [Install]
+          WantedBy=multi-user.target
+          EOF
+          
+          systemctl daemon-reload
+          systemctl enable phishintel.service
+          echo "=== PhishIntel Deployment Complete ==="
+      Tags:
+        - Key: Name
+          Value: PhishIntel-Cloud-Server
+
+  # 7. Elastic IP (Fixed Public IP)
+  ElasticIP:
+    Type: AWS::EC2::EIP
+    DependsOn: VPCGatewayAttachment
+    Properties:
+      Domain: vpc
+      InstanceId: !Ref EC2Instance
+      Tags:
+        - Key: Name
+          Value: PhishIntel-ElasticIP
+
+Conditions:
+  HasKeyName: !Not [!Equals [!Ref KeyName, ""]]
+
+Outputs:
+  PublicIP:
+    Description: Elastic Public IP Address of the Phishing Intelligence Platform
+    Value: !Ref ElasticIP
+
+  ApplicationURL:
+    Description: Public React Dashboard URL
+    Value: !Sub "http://${ElasticIP}"
+
+  APIHealthCheck:
+    Description: FastAPI Health Check Endpoint
+    Value: !Sub "http://${ElasticIP}/health"
+
+  APIDocumentation:
+    Description: Interactive OpenAPI Swagger Documentation
+    Value: !Sub "http://${ElasticIP}/docs"

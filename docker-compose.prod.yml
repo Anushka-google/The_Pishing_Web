@@ -1,0 +1,78 @@
+# Phishing Detection & Risk Intelligence Platform
+# Production Cloud Docker Compose Specification (AWS EC2 / Virtual Server)
+#
+# Flow: Public Internet -> Frontend (Nginx :80/:443) -> Backend (FastAPI :8000) -> PostgreSQL (:5432)
+# Security: Backend and PostgreSQL are isolated on internal network without public port exposure.
+
+services:
+  # 1. Relational Database Service (PostgreSQL 16 Alpine)
+  postgres:
+    image: postgres:16-alpine
+    container_name: phishintel-postgres-prod
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-phishintel_admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-PhishIntel_Secure_2026!}
+      POSTGRES_DB: ${POSTGRES_DB:-phishing_db}
+    volumes:
+      - postgres_prod_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-phishintel_admin} -d ${POSTGRES_DB:-phishing_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    networks:
+      - phishintel-cloud-network
+
+  # 2. FastAPI Machine Learning Backend Service
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: phishintel-backend-prod
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-phishintel_admin}:${POSTGRES_PASSWORD:-PhishIntel_Secure_2026!}@postgres:5432/${POSTGRES_DB:-phishing_db}
+      PORT: 8000
+      PYTHONUNBUFFERED: "1"
+      LOG_LEVEL: INFO
+    volumes:
+      - app_logs:/app/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    networks:
+      - phishintel-cloud-network
+
+  # 3. Public Frontend Service (React SPA + Nginx Reverse Proxy)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: phishintel-frontend-prod
+    restart: always
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - phishintel-cloud-network
+
+volumes:
+  postgres_prod_data:
+    driver: local
+  app_logs:
+    driver: local
+
+networks:
+  phishintel-cloud-network:
+    driver: bridge

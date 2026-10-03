@@ -60,7 +60,7 @@ Risk Engine (Calibrated Probability → LOW / MEDIUM / HIGH + SHAP Explanations)
 | **23** | **Model Versioning & Dynamic Rollback** | ✅ Completed | [Model Versioning Spec](docs/phase_23_model_versioning.md) & [Version Manager](src/models/version_manager.py) |
 | **24** | **Structured Operational Logging** | ✅ Completed | [Logging Spec](docs/phase_24_structured_logging.md) & [Logging Middleware](api/middleware.py) |
 | **25** | **Latency & Performance Measurement** | ✅ Completed | [Performance Spec](docs/phase_25_performance_measurement.md) & [Profiler](src/evaluation/performance_profiler.py) |
-| **26** | Cloud Deployment | ⏳ Pending | Cloud-ready deployment setup |
+| **26** | **Public Cloud Deployment (AWS)** | ✅ Completed | [Cloud Spec](docs/phase_26_cloud_deployment.md) & [AWS CloudFormation](deploy/aws/cloudformation.yml) |
 | **27** | Production Monitoring & Drift | ⏳ Pending | Data drift detection & operational metrics |
 | **28** | Active Feedback Loop | ⏳ Pending | Retraining workflow & validation cycles |
 | **29** | Advanced Security Extensions | ⏳ Pending | DNS, WHOIS, and domain reputation signals |
