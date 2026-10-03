@@ -63,22 +63,24 @@ desktop.ini
 mlruns/
 mlartifacts/
 
-# Large dataset raw files (preserve structure via gitkeep)
+# Dataset files: Ignore transient databases and large dumps, but track project datasets
+*.db
+data/*.db
 data/raw/phishing/*
 !data/raw/phishing/.gitkeep
+!data/raw/phishing/phishing_urls.csv
 data/raw/legitimate/*
 !data/raw/legitimate/.gitkeep
-data/processed/*.csv
-!data/processed/.gitkeep
-data/real_world/*.csv
-data/*.db
-*.db
+!data/raw/legitimate/legitimate_urls.csv
+!data/processed/*.csv
+!data/real_world/*.csv
 
-# Large serialized model files
+# Model files: Track production joblib artifacts and version manifests, ignore transient pickles
 models/*.pkl
-models/*.joblib
 models/*.onnx
 !models/.gitkeep
+!models/*.joblib
+
 
 # Node / Frontend build (for Phase 18+)
 frontend/node_modules/
