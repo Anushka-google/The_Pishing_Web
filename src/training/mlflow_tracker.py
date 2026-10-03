@@ -436,7 +436,8 @@ class MLflowExperimentTracker:
                     sk_model=model,
                     name="model",
                     signature=signature,
-                    input_example=input_sample
+                    input_example=input_sample,
+                    serialization_format="cloudpickle"
                 )
 
             # Return run record

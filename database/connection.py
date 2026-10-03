@@ -34,8 +34,12 @@ engine = create_engine(
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
+_db_initialized = False
+
+
 def init_db():
     """Initializes tables in database and runs seamless schema migration for new performance columns."""
+    global _db_initialized
     Base.metadata.create_all(bind=engine)
     try:
         from sqlalchemy import inspect, text
@@ -56,12 +60,24 @@ def init_db():
                 conn.commit()
     except Exception:
         pass
+    _db_initialized = True
 
 
 def get_db():
     """FastAPI Dependency for database session lifecycle management."""
+    global _db_initialized
+    if not _db_initialized:
+        init_db()
     db: Session = SessionLocal()
     try:
         yield db
     finally:
         db.close()
+
+
+# Ensure SQLite tables exist upon module import
+if DATABASE_URL.startswith("sqlite"):
+    try:
+        init_db()
+    except Exception:
+        pass
