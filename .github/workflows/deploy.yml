@@ -78,13 +78,17 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Deploy to AWS EC2 via SSH (if secrets provided)
-        if: ${{ secrets.EC2_SSH_PRIVATE_KEY != '' }}
+      - name: Deploy to AWS EC2 via SSH
         env:
           AWS_SSH_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
           EC2_HOST: ${{ secrets.EC2_PUBLIC_HOST }}
           EC2_USER: ${{ secrets.EC2_USER || 'ec2-user' }}
         run: |
+          if [ -z "$AWS_SSH_KEY" ] || [ -z "$EC2_HOST" ]; then
+            echo "AWS EC2 SSH credentials not configured in GitHub Secrets."
+            echo "Skipping automated remote EC2 deployment."
+            exit 0
+          fi
           mkdir -p ~/.ssh
           echo "$AWS_SSH_KEY" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
