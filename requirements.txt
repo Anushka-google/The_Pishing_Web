@@ -18,6 +18,7 @@ requests>=2.31.0
 # Database & Config
 sqlalchemy>=2.0.0
 psycopg2-binary>=2.9.9
+psycopg[binary]>=3.1.18
 pyyaml>=6.0.1
 
 # MLOps & Experiment Tracking

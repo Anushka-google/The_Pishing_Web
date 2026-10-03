@@ -17,6 +17,10 @@ DATABASE_URL = os.getenv(
     "sqlite:///./data/phishing_intelligence.db"
 )
 
+# In SQLAlchemy 2.0, postgresql:// defaults to psycopg 3; normalize to postgresql+psycopg2://
+if DATABASE_URL.startswith("postgresql://"):
+    DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+psycopg2://", 1)
+
 # Connect args (needed for SQLite multi-threading)
 connect_args = {"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {}
 
