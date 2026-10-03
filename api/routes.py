@@ -22,10 +22,12 @@ from api.schemas import (
     PredictRequest, PredictResponse, HistoryResponse,
     HistoryRecord, StatsResponse, HealthResponse,
     ModelVersionsResponse, ModelSwitchRequest, ModelSwitchResponse, ModelVersionItem,
-    PerformanceResponse, PerformanceDistribution
+    PerformanceResponse, PerformanceDistribution,
+    DriftMonitoringResponse, RetrainingJustificationRequest, RetrainingJustificationResponse
 )
 from src.prediction.predict import ProductionPredictor
 from src.evaluation.performance_profiler import identify_bottleneck, SystemPerformanceProfiler
+from src.monitoring.drift_detector import ProductionMonitor, DataDriftDetector
 from database.connection import get_db
 from database.repository import PredictionRepository
 from api.logging_config import logger, sanitize_url
@@ -43,6 +45,16 @@ def get_predictor() -> ProductionPredictor:
     if _predictor is None:
         _predictor = ProductionPredictor(enable_shap=True)
     return _predictor
+
+
+_monitor: Optional[ProductionMonitor] = None
+
+
+def get_monitor() -> ProductionMonitor:
+    global _monitor
+    if _monitor is None:
+        _monitor = ProductionMonitor()
+    return _monitor
 
 
 @router.get("/health", response_model=HealthResponse, tags=["Health"])
@@ -448,3 +460,98 @@ async def get_performance_telemetry(request: Request, db: Session = Depends(get_
         sla_compliance=data["sla_compliance"],
         live_database_telemetry=db_telemetry
     )
+
+
+@router.get("/monitoring/drift", response_model=DriftMonitoringResponse, tags=["Monitoring"])
+async def get_drift_monitoring_report(
+    request: Request,
+    scenario: Optional[str] = Query(None, description="Optional simulation scenario ('healthy', 'short_urls', 'phishing_surge', 'critical_drift')"),
+    sample_limit: int = Query(250, ge=10, le=2000, description="Max recent records to evaluate"),
+    db: Session = Depends(get_db)
+):
+    """
+    Phase 27: Production Monitoring & Drift Detection.
+    Monitors 6 key dimensions:
+    1. URL-length distributions (PSI + KS test)
+    2. Domain characteristics (subdomains, entropy, IP host ratio, TLD TVD)
+    3. Prediction distributions (probability PSI + risk tiers)
+    4. Phishing/legitimate ratios
+    5. API latency percentiles (P50/P95/P99) and SLA compliance
+    6. System error rates
+    Includes automated root-cause investigation and retraining evaluation.
+    """
+    monitor = get_monitor()
+    predictor = get_predictor()
+    request.state.model_version = predictor.model_version
+
+    if scenario:
+        records = monitor.generate_synthetic_production_window(scenario=scenario, sample_size=sample_limit)
+        report = monitor.detector.evaluate_production_data(records)
+    else:
+        report = monitor.audit_from_database(db=db, sample_limit=sample_limit, include_synthetic_if_empty=True)
+
+    logger.info(
+        f"Drift monitoring audit executed: status={report['overall_status']}, retrain_justified={report['retraining_evaluation']['retrain_justified']}",
+        extra={
+            "request_id": getattr(request.state, "request_id", None),
+            "endpoint": "GET /monitoring/drift",
+            "model_version": predictor.model_version,
+            "overall_status": report["overall_status"]
+        }
+    )
+    return report
+
+
+@router.post("/monitoring/evaluate-retrain", response_model=RetrainingJustificationResponse, tags=["Monitoring"])
+async def evaluate_retraining_justification(
+    payload: RetrainingJustificationRequest,
+    request: Request,
+    db: Session = Depends(get_db)
+):
+    """
+    Phase 27: Automated Retraining Justification Engine.
+    Implements the closed-loop governance:
+    Production Data -> Monitoring -> Detect Changes -> Investigate -> Retrain when justified.
+    Evaluates multi-condition statistical triggers (PSI >= 0.25, class shift > 25%, emergent infrastructure).
+    """
+    monitor = get_monitor()
+    predictor = get_predictor()
+    request.state.model_version = predictor.model_version
+
+    window_size = payload.sample_window_size or 250
+    if payload.scenario:
+        records = monitor.generate_synthetic_production_window(scenario=payload.scenario, sample_size=window_size)
+        report = monitor.detector.evaluate_production_data(records)
+    else:
+        report = monitor.audit_from_database(db=db, sample_limit=window_size, include_synthetic_if_empty=True)
+
+    retrain_eval = report["retraining_evaluation"]
+    metrics_summary = {
+        "url_length_psi": report["metrics"]["url_length"]["psi"],
+        "probability_psi": report["metrics"]["prediction_distribution"]["probability_psi"],
+        "entropy_psi": report["metrics"]["domain_characteristics"]["shannon_entropy"]["psi"],
+        "phishing_shift_pct": report["metrics"]["phishing_legitimate_ratio"]["shift_percentage_points"],
+        "p95_latency_ms": report["metrics"]["api_latency"]["p95_latency_ms"],
+        "error_rate_pct": report["metrics"]["error_rate"]["error_rate_pct"],
+        "overall_status": report["overall_status"]
+    }
+
+    logger.info(
+        f"Retraining evaluation completed: justified={retrain_eval['retrain_justified']}, action={retrain_eval['recommended_action']}",
+        extra={
+            "request_id": getattr(request.state, "request_id", None),
+            "endpoint": "POST /monitoring/evaluate-retrain",
+            "retrain_justified": retrain_eval["retrain_justified"]
+        }
+    )
+
+    return RetrainingJustificationResponse(
+        timestamp=report["timestamp"],
+        retrain_justified=retrain_eval["retrain_justified"],
+        severity=retrain_eval["severity"],
+        recommended_action=retrain_eval["recommended_action"],
+        triggers_fired=retrain_eval["triggers_fired"],
+        retraining_plan=retrain_eval["retraining_plan"],
+        metrics_summary=metrics_summary
+    )
+

@@ -195,3 +195,56 @@ class ModelSwitchResponse(BaseModel):
     model_name: str
     feature_count: int
     message: str
+
+
+# ---------------------------------------------------------
+# Phase 27: Production Monitoring & Drift Detection Schemas
+# ---------------------------------------------------------
+
+class RetrainingPlan(BaseModel):
+    action: str
+    target_model_version: str
+    recommended_steps: List[str]
+    retraining_priority: str
+
+
+class RetrainingEvaluation(BaseModel):
+    retrain_justified: bool
+    severity: str
+    triggers_fired_count: int
+    triggers_fired: List[str]
+    recommended_action: str
+    retraining_plan: RetrainingPlan
+
+
+class InvestigationReport(BaseModel):
+    findings: List[str]
+    root_cause_hypotheses: List[str]
+
+
+class DriftMonitoringResponse(BaseModel):
+    timestamp: str
+    window_size: int
+    overall_status: str
+    metrics: Dict[str, Any]
+    investigation: InvestigationReport
+    retraining_evaluation: RetrainingEvaluation
+
+
+class RetrainingJustificationRequest(BaseModel):
+    sample_window_size: Optional[int] = Field(default=500, description="Number of recent records to evaluate.")
+    scenario: Optional[str] = Field(
+        default=None,
+        description="Optional simulation scenario: 'healthy', 'short_urls', 'phishing_surge', 'critical_drift'."
+    )
+
+
+class RetrainingJustificationResponse(BaseModel):
+    timestamp: str
+    retrain_justified: bool
+    severity: str
+    recommended_action: str
+    triggers_fired: List[str]
+    retraining_plan: RetrainingPlan
+    metrics_summary: Dict[str, Any]
+
