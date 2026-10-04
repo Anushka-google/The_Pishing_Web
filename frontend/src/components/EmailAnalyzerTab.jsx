@@ -471,7 +471,7 @@ export default function EmailAnalyzerTab({ onAnalyzeEmail, isLoading, error, res
                           fontWeight: '700',
                           color: link.risk_level === 'HIGH' ? '#ef4444' : (link.risk_level === 'MEDIUM' ? '#f59e0b' : '#10b981')
                         }}>
-                          {Math.round(link.probability * 100)}%
+                          {Math.round(((link.fused_probability !== undefined ? link.fused_probability : (link.probability ?? link.ml_probability ?? 0))) * 100)}%
                         </span>
 
                         <span className={`badge-cyber ${link.risk_level === 'HIGH' ? 'badge-high' : (link.risk_level === 'MEDIUM' ? 'badge-medium' : 'badge-low')}`}>
