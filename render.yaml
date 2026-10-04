@@ -1,0 +1,16 @@
+# Render Blueprint Specification for Phishing Detection Platform
+# 100% Free Tier - Zero Credit Card Required - No Autopay Risk
+services:
+  - type: web
+    name: phishintel-platform
+    runtime: docker
+    dockerfilePath: Dockerfile
+    plan: free
+    region: oregon
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: PYTHONUNBUFFERED
+        value: "1"
+      - key: LOG_LEVEL
+        value: INFO

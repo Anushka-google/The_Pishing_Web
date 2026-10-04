@@ -88,9 +88,23 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     )
 
 
+import os
+from fastapi.staticfiles import StaticFiles
+
 # Register API routes
 app.include_router(router, prefix="/api/v1")
 app.include_router(router)  # Also expose directly at root /health, /predict, etc.
+
+# Mount production frontend bundle if built (Render & Unified Production)
+frontend_candidates = [
+    os.path.abspath(os.path.join(os.path.dirname(__file__), "../frontend/dist")),
+    "/app/frontend/dist"
+]
+for fdir in frontend_candidates:
+    if os.path.exists(fdir) and os.path.isdir(fdir):
+        logger.info(f"Mounting production frontend bundle from {fdir}")
+        app.mount("/", StaticFiles(directory=fdir, html=True), name="frontend")
+        break
 
 
 if __name__ == "__main__":
