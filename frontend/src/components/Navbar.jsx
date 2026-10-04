@@ -1,44 +1,96 @@
 import React from 'react';
-import { Shield, Activity, GitBranch } from 'lucide-react';
+import { Shield, Activity, GitBranch, Globe, Mail, BarChart3, Clock } from 'lucide-react';
 
-export default function Navbar({ systemHealth }) {
+export default function Navbar({ activeTab, onTabChange, systemHealth, modelVersion = 'v1' }) {
   return (
-    <header style={{ borderBottom: '1px solid #1e293b', background: '#090e1a', padding: '1rem 0' }}>
-      <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+    <header style={{
+      borderBottom: '1px solid #162238',
+      background: 'rgba(5, 8, 17, 0.85)',
+      backdropFilter: 'blur(16px)',
+      position: 'sticky',
+      top: 0,
+      zIndex: 50,
+      padding: '0.75rem 0'
+    }}>
+      <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+        {/* Brand / Logo */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
           <div style={{
-            background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+            background: 'linear-gradient(135deg, rgba(0, 240, 255, 0.2), rgba(0, 119, 255, 0.2))',
+            border: '1px solid rgba(0, 240, 255, 0.5)',
             padding: '0.5rem',
-            borderRadius: '8px',
+            borderRadius: '10px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: '0 0 15px rgba(59, 130, 246, 0.4)'
+            boxShadow: '0 0 20px rgba(0, 240, 255, 0.25)'
           }}>
-            <Shield size={24} color="#ffffff" />
+            <Shield size={22} color="#00f0ff" />
           </div>
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <h1 style={{ fontSize: '1.25rem', fontWeight: '800', letterSpacing: '-0.02em', color: '#f8fafc' }}>
-                PhishIntel
-              </h1>
-              <span className="badge badge-blue">AI v1.0</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+              <span style={{ fontSize: '1.2rem', fontWeight: '900', letterSpacing: '-0.03em', color: '#f8fafc' }}>
+                PHISH<span style={{ color: '#00f0ff' }}>INTEL</span>
+              </span>
+              <span className="badge-cyber badge-cyan" style={{ fontSize: '0.68rem', padding: '0.15rem 0.5rem' }}>
+                DEFENSE {modelVersion.toUpperCase()}
+              </span>
             </div>
-            <p style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
-              Zero-Leakage Phishing Detection & Risk Intelligence Platform
+            <p style={{ fontSize: '0.72rem', color: '#64748b', letterSpacing: '0.02em', textTransform: 'uppercase' }}>
+              AI Risk Intelligence & Threat Operations
             </p>
           </div>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        {/* Command Center Navigation Tabs */}
+        <nav style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', background: '#090e1a', padding: '0.25rem', borderRadius: '10px', border: '1px solid #162238' }}>
+          <button
+            type="button"
+            className={`nav-tab ${activeTab === 'scanner' ? 'active' : ''}`}
+            onClick={() => onTabChange('scanner')}
+          >
+            <Globe size={15} />
+            <span>URL Scanner</span>
+          </button>
+
+          <button
+            type="button"
+            className={`nav-tab ${activeTab === 'email' ? 'active' : ''}`}
+            onClick={() => onTabChange('email')}
+          >
+            <Mail size={15} />
+            <span>Email Inspector</span>
+          </button>
+
+          <button
+            type="button"
+            className={`nav-tab ${activeTab === 'telemetry' ? 'active' : ''}`}
+            onClick={() => onTabChange('telemetry')}
+          >
+            <BarChart3 size={15} />
+            <span>SOC Telemetry</span>
+          </button>
+
+          <button
+            type="button"
+            className={`nav-tab ${activeTab === 'history' ? 'active' : ''}`}
+            onClick={() => onTabChange('history')}
+          >
+            <Clock size={15} />
+            <span>Audit Log</span>
+          </button>
+        </nav>
+
+        {/* Health & Repository telemetry */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           <div style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '0.4rem',
-            padding: '0.35rem 0.75rem',
+            gap: '0.5rem',
+            padding: '0.4rem 0.8rem',
             borderRadius: '9999px',
-            background: '#0d1527',
-            border: '1px solid #1e293b',
+            background: '#0c1424',
+            border: '1px solid #162238',
             fontSize: '0.75rem',
             color: systemHealth ? '#34d399' : '#f87171'
           }}>
@@ -48,26 +100,19 @@ export default function Navbar({ systemHealth }) {
               borderRadius: '50%',
               backgroundColor: systemHealth ? '#10b981' : '#ef4444',
               display: 'inline-block',
-              boxShadow: systemHealth ? '0 0 8px #10b981' : 'none'
+              boxShadow: systemHealth ? '0 0 10px #10b981' : 'none'
             }}></span>
-            <span>{systemHealth ? 'API & Model Online' : 'Connecting to API...'}</span>
+            <span style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: '600' }}>
+              {systemHealth ? 'ENGINE ONLINE' : 'DISCONNECTED'}
+            </span>
           </div>
 
           <a
             href="https://github.com/Anushka-google/The_Pishing_Web"
             target="_blank"
             rel="noreferrer"
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.35rem',
-              color: '#94a3b8',
-              textDecoration: 'none',
-              fontSize: '0.8rem',
-              padding: '0.35rem 0.65rem',
-              borderRadius: '6px',
-              border: '1px solid #1e293b'
-            }}
+            className="btn-cyber-secondary"
+            style={{ textDecoration: 'none' }}
           >
             <GitBranch size={14} />
             <span>GitHub</span>

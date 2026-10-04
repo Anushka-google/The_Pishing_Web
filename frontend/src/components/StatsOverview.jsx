@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldCheck, ShieldAlert, BarChart3, Zap } from 'lucide-react';
+import { ShieldCheck, ShieldAlert, BarChart3, Zap, Activity } from 'lucide-react';
 
 export default function StatsOverview({ stats }) {
   const total = stats?.total_scans || 0;
@@ -10,32 +10,32 @@ export default function StatsOverview({ stats }) {
 
   const cards = [
     {
-      title: 'Total Scans Executed',
+      title: 'TOTAL SCANS AUDITED',
       value: total.toLocaleString(),
-      sub: 'Audited in PostgreSQL / DB',
-      icon: <BarChart3 size={20} color="#3b82f6" />,
-      border: '#1e293b'
+      sub: 'PostgreSQL Telemetry Log',
+      icon: <BarChart3 size={18} color="#00f0ff" />,
+      accentColor: '#00f0ff'
     },
     {
-      title: 'Phishing Attacks Flagged',
+      title: 'CONFIRMED PHISHING THREATS',
       value: phish.toLocaleString(),
-      sub: `${rate}% Threat Detection Ratio`,
-      icon: <ShieldAlert size={20} color="#ef4444" />,
-      border: 'rgba(239, 68, 68, 0.3)'
+      sub: `${rate}% Positive Detection Rate`,
+      icon: <ShieldAlert size={18} color="#ef4444" />,
+      accentColor: '#ef4444'
     },
     {
-      title: 'Legitimate URLs Verified',
+      title: 'LEGITIMATE DESTINATIONS',
       value: legit.toLocaleString(),
       sub: 'Zero False Positives on Tranco',
-      icon: <ShieldCheck size={20} color="#10b981" />,
-      border: 'rgba(16, 185, 129, 0.3)'
+      icon: <ShieldCheck size={18} color="#10b981" />,
+      accentColor: '#10b981'
     },
     {
-      title: 'Mean Pipeline Latency',
+      title: 'MEDIAN PIPELINE LATENCY',
       value: `${latency} ms`,
-      sub: 'Optimized C-Ensemble (< 2ms)',
-      icon: <Zap size={20} color="#f59e0b" />,
-      border: '#1e293b'
+      sub: 'Feature Extraction + Inference',
+      icon: <Zap size={18} color="#f59e0b" />,
+      accentColor: '#f59e0b'
     }
   ];
 
@@ -44,20 +44,47 @@ export default function StatsOverview({ stats }) {
       display: 'grid',
       gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
       gap: '1rem',
-      marginBottom: '1.5rem'
+      marginBottom: '1.75rem'
     }}>
       {cards.map((c, i) => (
-        <div key={i} className="card" style={{ padding: '1.25rem', borderColor: c.border }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
-            <span style={{ fontSize: '0.8rem', color: '#94a3b8', fontWeight: '500' }}>{c.title}</span>
-            <div style={{ background: '#090e1a', padding: '0.4rem', borderRadius: '6px', border: '1px solid #1e293b' }}>
+        <div
+          key={i}
+          className="cyber-card"
+          style={{
+            padding: '1.25rem',
+            background: '#0a101f',
+            borderColor: '#162238'
+          }}
+        >
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.6rem' }}>
+            <span style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: '700', letterSpacing: '0.04em' }}>
+              {c.title}
+            </span>
+            <div style={{
+              background: '#070b14',
+              padding: '0.35rem',
+              borderRadius: '6px',
+              border: '1px solid #162238',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
               {c.icon}
             </div>
           </div>
-          <div style={{ fontSize: '1.65rem', fontWeight: '800', color: '#f8fafc', letterSpacing: '-0.02em', marginBottom: '0.2rem' }}>
+
+          <div style={{
+            fontSize: '1.75rem',
+            fontWeight: '900',
+            color: '#f8fafc',
+            fontFamily: 'JetBrains Mono, monospace',
+            letterSpacing: '-0.03em',
+            marginBottom: '0.2rem'
+          }}>
             {c.value}
           </div>
-          <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
+
+          <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
             {c.sub}
           </div>
         </div>
