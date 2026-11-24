@@ -1,0 +1,272 @@
+{
+  "audit_timestamp": "2026-11-21 06:14:48 UTC",
+  "total_authentic_samples": 20013,
+  "unique_registered_domains": 14889,
+  "domain_grouped_split": {
+    "strategy": "domain_grouped",
+    "train_samples": 15847,
+    "test_samples": 4166,
+    "train_domains_count": 11911,
+    "test_domains_count": 2978,
+    "domain_overlap": 0,
+    "models": [
+      {
+        "split_strategy": "Domain-Grouped Split (Zero Domain Overlap)",
+        "model": "Logistic Regression",
+        "accuracy": 0.9784,
+        "precision": 0.9977,
+        "recall": 0.9616,
+        "f1_score": 0.9793,
+        "roc_auc": 0.9918,
+        "pr_auc": 0.9949,
+        "false_positive_rate": 0.0026,
+        "false_negative_rate": 0.0384,
+        "train_time_sec": 0.0432,
+        "inference_latency_ms": 0.0003,
+        "confusion_matrix": {
+          "tp": 2126,
+          "fp": 5,
+          "tn": 1950,
+          "fn": 85
+        }
+      },
+      {
+        "split_strategy": "Domain-Grouped Split (Zero Domain Overlap)",
+        "model": "Decision Tree",
+        "accuracy": 0.9789,
+        "precision": 0.9949,
+        "recall": 0.9652,
+        "f1_score": 0.9798,
+        "roc_auc": 0.9858,
+        "pr_auc": 0.9883,
+        "false_positive_rate": 0.0056,
+        "false_negative_rate": 0.0348,
+        "train_time_sec": 0.0334,
+        "inference_latency_ms": 0.0003,
+        "confusion_matrix": {
+          "tp": 2134,
+          "fp": 11,
+          "tn": 1944,
+          "fn": 77
+        }
+      },
+      {
+        "split_strategy": "Domain-Grouped Split (Zero Domain Overlap)",
+        "model": "Random Forest",
+        "accuracy": 0.9818,
+        "precision": 0.9963,
+        "recall": 0.9692,
+        "f1_score": 0.9826,
+        "roc_auc": 0.9947,
+        "pr_auc": 0.9965,
+        "false_positive_rate": 0.0041,
+        "false_negative_rate": 0.0308,
+        "train_time_sec": 0.2077,
+        "inference_latency_ms": 0.0122,
+        "confusion_matrix": {
+          "tp": 2143,
+          "fp": 8,
+          "tn": 1947,
+          "fn": 68
+        }
+      },
+      {
+        "split_strategy": "Domain-Grouped Split (Zero Domain Overlap)",
+        "model": "XGBoost",
+        "accuracy": 0.982,
+        "precision": 0.9954,
+        "recall": 0.9706,
+        "f1_score": 0.9828,
+        "roc_auc": 0.9941,
+        "pr_auc": 0.9963,
+        "false_positive_rate": 0.0051,
+        "false_negative_rate": 0.0294,
+        "train_time_sec": 0.1101,
+        "inference_latency_ms": 0.0016,
+        "confusion_matrix": {
+          "tp": 2146,
+          "fp": 10,
+          "tn": 1945,
+          "fn": 65
+        }
+      }
+    ]
+  },
+  "time_based_split": {
+    "strategy": "time_based_chronological",
+    "train_samples": 16010,
+    "test_samples": 4003,
+    "train_date_range": "2026-07-06 08:31:42 to 2026-10-24 05:53:11",
+    "test_date_range": "2026-10-24 05:53:11 to 2026-11-20 17:19:08",
+    "models": [
+      {
+        "split_strategy": "Time-Based Chronological Split (Temporal Generalization)",
+        "model": "Logistic Regression",
+        "accuracy": 0.9408,
+        "precision": 0.9985,
+        "recall": 0.918,
+        "f1_score": 0.9565,
+        "roc_auc": 0.9874,
+        "pr_auc": 0.9956,
+        "false_positive_rate": 0.0034,
+        "false_negative_rate": 0.082,
+        "train_time_sec": 0.0299,
+        "inference_latency_ms": 0.0001,
+        "confusion_matrix": {
+          "tp": 2608,
+          "fp": 4,
+          "tn": 1158,
+          "fn": 233
+        }
+      },
+      {
+        "split_strategy": "Time-Based Chronological Split (Temporal Generalization)",
+        "model": "Decision Tree",
+        "accuracy": 0.946,
+        "precision": 0.9992,
+        "recall": 0.9247,
+        "f1_score": 0.9605,
+        "roc_auc": 0.9778,
+        "pr_auc": 0.9917,
+        "false_positive_rate": 0.0017,
+        "false_negative_rate": 0.0753,
+        "train_time_sec": 0.0226,
+        "inference_latency_ms": 0.0002,
+        "confusion_matrix": {
+          "tp": 2627,
+          "fp": 2,
+          "tn": 1160,
+          "fn": 214
+        }
+      },
+      {
+        "split_strategy": "Time-Based Chronological Split (Temporal Generalization)",
+        "model": "Random Forest",
+        "accuracy": 0.949,
+        "precision": 0.9996,
+        "recall": 0.9285,
+        "f1_score": 0.9628,
+        "roc_auc": 0.9896,
+        "pr_auc": 0.9963,
+        "false_positive_rate": 0.0009,
+        "false_negative_rate": 0.0715,
+        "train_time_sec": 0.1844,
+        "inference_latency_ms": 0.0137,
+        "confusion_matrix": {
+          "tp": 2638,
+          "fp": 1,
+          "tn": 1161,
+          "fn": 203
+        }
+      },
+      {
+        "split_strategy": "Time-Based Chronological Split (Temporal Generalization)",
+        "model": "XGBoost",
+        "accuracy": 0.949,
+        "precision": 0.9992,
+        "recall": 0.9289,
+        "f1_score": 0.9628,
+        "roc_auc": 0.9895,
+        "pr_auc": 0.9963,
+        "false_positive_rate": 0.0017,
+        "false_negative_rate": 0.0711,
+        "train_time_sec": 0.1123,
+        "inference_latency_ms": 0.0014,
+        "confusion_matrix": {
+          "tp": 2639,
+          "fp": 2,
+          "tn": 1160,
+          "fn": 202
+        }
+      }
+    ]
+  },
+  "independent_external_holdout": {
+    "strategy": "independent_external_holdout",
+    "train_samples_dev": 9206,
+    "test_samples_authentic": 19754,
+    "disjoint_domains_evaluated": 14844,
+    "models": [
+      {
+        "split_strategy": "Independent External Holdout (Dev -> Authentic Wild)",
+        "model": "Logistic Regression",
+        "accuracy": 0.7583,
+        "precision": 0.984,
+        "recall": 0.5207,
+        "f1_score": 0.6811,
+        "roc_auc": 0.7775,
+        "pr_auc": 0.8504,
+        "false_positive_rate": 0.0083,
+        "false_negative_rate": 0.4793,
+        "train_time_sec": 0.0273,
+        "inference_latency_ms": 0.0001,
+        "confusion_matrix": {
+          "tp": 5098,
+          "fp": 83,
+          "tn": 9881,
+          "fn": 4692
+        }
+      },
+      {
+        "split_strategy": "Independent External Holdout (Dev -> Authentic Wild)",
+        "model": "Decision Tree",
+        "accuracy": 0.7115,
+        "precision": 0.9899,
+        "recall": 0.4222,
+        "f1_score": 0.5919,
+        "roc_auc": 0.7099,
+        "pr_auc": 0.7065,
+        "false_positive_rate": 0.0042,
+        "false_negative_rate": 0.5778,
+        "train_time_sec": 0.0098,
+        "inference_latency_ms": 0.0002,
+        "confusion_matrix": {
+          "tp": 4133,
+          "fp": 42,
+          "tn": 9922,
+          "fn": 5657
+        }
+      },
+      {
+        "split_strategy": "Independent External Holdout (Dev -> Authentic Wild)",
+        "model": "Random Forest",
+        "accuracy": 0.7299,
+        "precision": 0.9998,
+        "recall": 0.4552,
+        "f1_score": 0.6255,
+        "roc_auc": 0.8763,
+        "pr_auc": 0.923,
+        "false_positive_rate": 0.0001,
+        "false_negative_rate": 0.5448,
+        "train_time_sec": 0.1745,
+        "inference_latency_ms": 0.0039,
+        "confusion_matrix": {
+          "tp": 4456,
+          "fp": 1,
+          "tn": 9963,
+          "fn": 5334
+        }
+      },
+      {
+        "split_strategy": "Independent External Holdout (Dev -> Authentic Wild)",
+        "model": "XGBoost",
+        "accuracy": 0.5057,
+        "precision": 0.6543,
+        "recall": 0.0054,
+        "f1_score": 0.0107,
+        "roc_auc": 0.7717,
+        "pr_auc": 0.8489,
+        "false_positive_rate": 0.0028,
+        "false_negative_rate": 0.9946,
+        "train_time_sec": 0.0514,
+        "inference_latency_ms": 0.0006,
+        "confusion_matrix": {
+          "tp": 53,
+          "fp": 28,
+          "tn": 9936,
+          "fn": 9737
+        }
+      }
+    ]
+  }
+}

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Loader2, AlertCircle, Sparkles, Shield, Globe, Layers, CornerDownLeft } from 'lucide-react';
+import { Search, Loader2, AlertCircle, Sparkles, Shield, Globe, Layers, CornerDownLeft, Radar } from 'lucide-react';
 
 export default function UrlAnalyzer({ onAnalyze, isLoading, error, enhancedMode, onToggleEnhanced }) {
   const [url, setUrl] = useState('');
@@ -9,28 +9,28 @@ export default function UrlAnalyzer({ onAnalyze, isLoading, error, enhancedMode,
       category: 'BENIGN HARD-NEGATIVE',
       label: 'Google Auth Portal',
       url: 'https://accounts.google.com/signin/v2/identifier',
-      color: '#10b981',
+      color: '#00e676',
       badgeClass: 'badge-low'
     },
     {
       category: 'ESTABLISHED AUTHORITY',
       label: 'Tranco Top Docs',
       url: 'https://docs.oracle.com/en/java/javase/index.html',
-      color: '#3b82f6',
+      color: '#1677ff',
       badgeClass: 'badge-blue'
     },
     {
       category: 'SUBDOMAIN EVASION',
       label: 'PayPal Cloud Attack',
       url: 'https://login.paypal.com.cloud-node-402.cc/session/verify?token=9284',
-      color: '#ef4444',
+      color: '#ff1744',
       badgeClass: 'badge-high'
     },
     {
       category: 'INFRASTRUCTURE ATTACK',
       label: 'Direct IP Harvester',
       url: 'http://176.77.46.141:53458/bin.sh',
-      color: '#f97316',
+      color: '#f59e0b',
       badgeClass: 'badge-medium'
     }
   ];
@@ -48,68 +48,98 @@ export default function UrlAnalyzer({ onAnalyze, isLoading, error, enhancedMode,
   };
 
   return (
-    <div className="cyber-card cyber-corners" style={{ marginBottom: '1.75rem', background: '#0a101f', borderColor: '#162238' }}>
+    <div
+      id="url-analyzer-section"
+      className="cyber-card cyber-corners"
+      style={{
+        marginBottom: '1.75rem',
+        background: 'rgba(10, 19, 41, 0.78)',
+        borderColor: '#162442',
+        position: 'relative',
+        overflow: 'hidden'
+      }}
+    >
+      {/* Active Scanline Effect during inspection */}
+      {isLoading && <div className="scanline" />}
+
       {/* Header with Mode Toggle */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.25rem' }}>
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        flexWrap: 'wrap',
+        gap: '1rem',
+        marginBottom: '1.25rem'
+      }}>
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.2rem' }}>
-            <Globe size={18} color="#00f0ff" />
-            <h2 style={{ fontSize: '1.15rem', fontWeight: '800', color: '#f8fafc', letterSpacing: '-0.02em' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem', marginBottom: '0.25rem' }}>
+            <Globe size={19} color="#00e5ff" />
+            <h2 style={{ fontSize: '1.2rem', fontWeight: '800', color: '#f8fafc', letterSpacing: '-0.02em' }}>
               URL Threat Inspection Console
             </h2>
           </div>
           <p style={{ fontSize: '0.82rem', color: '#94a3b8' }}>
-            Scan web destinations across 22 lexical features, TreeSHAP attributions, DNS, and WHOIS domain age.
+            Deconstruct web destinations across 22 lexical features, TreeSHAP attributions, DNS records, and WHOIS domain age.
           </p>
         </div>
 
         {/* Enhanced Intelligence Switch */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: '#070b14', padding: '0.35rem 0.75rem', borderRadius: '8px', border: '1px solid #162238' }}>
-          <Layers size={15} color={enhancedMode ? '#00f0ff' : '#64748b'} />
-          <span style={{ fontSize: '0.75rem', fontWeight: '600', color: enhancedMode ? '#00f0ff' : '#94a3b8' }}>
-            Multi-Signal Mode (+DNS, +WHOIS, +Threat Feeds)
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.65rem',
+          background: 'rgba(6, 11, 23, 0.85)',
+          padding: '0.45rem 0.85rem',
+          borderRadius: '10px',
+          border: '1px solid #162442',
+          boxShadow: enhancedMode ? '0 0 15px rgba(0, 229, 255, 0.15)' : 'none'
+        }}>
+          <Layers size={15} color={enhancedMode ? '#00e5ff' : '#64748b'} />
+          <span style={{ fontSize: '0.78rem', fontWeight: '700', color: enhancedMode ? '#00e5ff' : '#94a3b8' }}>
+            Multi-Signal Engine (+DNS, +WHOIS, +Feeds)
           </span>
           <button
             type="button"
             onClick={onToggleEnhanced}
             style={{
-              width: '36px',
-              height: '20px',
+              width: '40px',
+              height: '22px',
               borderRadius: '9999px',
-              background: enhancedMode ? '#00f0ff' : '#1e293b',
+              background: enhancedMode ? 'linear-gradient(135deg, #00e5ff, #1677ff)' : '#1e2d4d',
               border: 'none',
               cursor: 'pointer',
               position: 'relative',
-              transition: 'background 0.2s ease',
+              transition: 'all 0.22s ease',
               display: 'flex',
               alignItems: 'center',
-              padding: '2px'
+              padding: '2px',
+              boxShadow: enhancedMode ? '0 0 12px rgba(0, 229, 255, 0.5)' : 'none'
             }}
-            title="Toggle Phase 29 Multi-Signal Intelligence (Reputation + DNS + WHOIS)"
+            title="Toggle Multi-Signal Intelligence (Reputation + DNS + WHOIS)"
           >
             <div style={{
-              width: '16px',
-              height: '16px',
+              width: '18px',
+              height: '18px',
               borderRadius: '50%',
-              background: enhancedMode ? '#050811' : '#64748b',
-              transform: enhancedMode ? 'translateX(16px)' : 'translateX(0)',
-              transition: 'transform 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
-            }}></div>
+              background: enhancedMode ? '#050914' : '#64748b',
+              transform: enhancedMode ? 'translateX(18px)' : 'translateX(0)',
+              transition: 'transform 0.22s cubic-bezier(0.16, 1, 0.3, 1)'
+            }} />
           </button>
         </div>
       </div>
 
       {/* Input Form */}
-      <form onSubmit={handleSubmit} style={{ display: 'flex', gap: '0.75rem', marginBottom: '1.25rem', flexWrap: 'wrap' }}>
-        <div style={{ position: 'relative', flex: 1, minWidth: '280px' }}>
+      <form onSubmit={handleSubmit} style={{ display: 'flex', gap: '0.85rem', marginBottom: '1.25rem', flexWrap: 'wrap' }}>
+        <div style={{ position: 'relative', flex: 1, minWidth: '300px' }}>
           <input
             type="text"
             className="cyber-input"
-            placeholder="Enter target URL (e.g. https://auth-verify.company.com/login?session=...)"
+            placeholder="Enter destination URL to scan (e.g. https://auth-verify.company.com/login?session=...)"
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             disabled={isLoading}
-            style={{ paddingRight: '4rem' }}
+            style={{ paddingRight: '4.5rem', background: 'rgba(6, 11, 23, 0.9)' }}
           />
 
           <div style={{
@@ -119,7 +149,7 @@ export default function UrlAnalyzer({ onAnalyze, isLoading, error, enhancedMode,
             transform: 'translateY(-50%)',
             display: 'flex',
             alignItems: 'center',
-            gap: '0.4rem'
+            gap: '0.45rem'
           }}>
             {url && (
               <button
@@ -138,7 +168,7 @@ export default function UrlAnalyzer({ onAnalyze, isLoading, error, enhancedMode,
                 Clear
               </button>
             )}
-            <span style={{ fontSize: '0.65rem', fontFamily: 'monospace', color: '#475569', background: '#0f172a', padding: '2px 5px', borderRadius: '4px', border: '1px solid #1e293b' }}>
+            <span style={{ fontSize: '0.68rem', fontFamily: 'monospace', color: '#64748b', background: '#0a1329', padding: '2px 6px', borderRadius: '4px', border: '1px solid #162442' }}>
               ⏎
             </span>
           </div>
@@ -151,13 +181,13 @@ export default function UrlAnalyzer({ onAnalyze, isLoading, error, enhancedMode,
         >
           {isLoading ? (
             <>
-              <Loader2 size={18} className="animate-spin" />
-              <span>Analyzing Threat Signals...</span>
+              <Loader2 size={19} className="animate-spin" />
+              <span>Scanning Signals...</span>
             </>
           ) : (
             <>
-              <Search size={18} />
-              <span>Execute Inspection</span>
+              <Search size={19} />
+              <span>Inspect Destination</span>
             </>
           )}
         </button>
@@ -166,32 +196,33 @@ export default function UrlAnalyzer({ onAnalyze, isLoading, error, enhancedMode,
       {/* Error Banner */}
       {error && (
         <div style={{
-          background: 'rgba(239, 68, 68, 0.1)',
-          border: '1px solid rgba(239, 68, 68, 0.35)',
-          borderRadius: '8px',
-          padding: '0.85rem 1rem',
+          background: 'rgba(255, 23, 68, 0.12)',
+          border: '1px solid rgba(255, 23, 68, 0.4)',
+          borderRadius: '10px',
+          padding: '0.9rem 1.1rem',
           display: 'flex',
           alignItems: 'center',
-          gap: '0.6rem',
-          color: '#fca5a5',
+          gap: '0.65rem',
+          color: '#ff8a80',
           fontSize: '0.85rem',
-          marginBottom: '1.25rem'
+          marginBottom: '1.25rem',
+          boxShadow: '0 0 15px rgba(255, 23, 68, 0.15)'
         }}>
-          <AlertCircle size={18} color="#ef4444" />
+          <AlertCircle size={19} color="#ff1744" />
           <span>{error}</span>
         </div>
       )}
 
-      {/* Security Testing Attack Vectors */}
+      {/* Quick Verification Attack Vectors */}
       <div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.6rem' }}>
-          <Sparkles size={14} color="#00f0ff" />
-          <span style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-            Quick Verification Attack Vectors
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', marginBottom: '0.75rem' }}>
+          <Sparkles size={14} color="#00e5ff" />
+          <span style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+            Verified Attack Vector Scenarios
           </span>
         </div>
 
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.55rem' }}>
           {PRESETS.map((p, idx) => (
             <button
               key={idx}
@@ -200,20 +231,21 @@ export default function UrlAnalyzer({ onAnalyze, isLoading, error, enhancedMode,
               onClick={() => handlePreset(p.url)}
               disabled={isLoading}
               style={{
-                fontSize: '0.75rem',
-                padding: '0.4rem 0.75rem',
+                fontSize: '0.76rem',
+                padding: '0.45rem 0.85rem',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '0.5rem'
+                gap: '0.55rem'
               }}
             >
               <span style={{
-                width: '6px',
-                height: '6px',
+                width: '7px',
+                height: '7px',
                 borderRadius: '50%',
-                backgroundColor: p.color
+                backgroundColor: p.color,
+                boxShadow: `0 0 8px ${p.color}`
               }}></span>
-              <span style={{ color: '#e2e8f0', fontWeight: '600' }}>{p.label}</span>
+              <span style={{ color: '#f8fafc', fontWeight: '600' }}>{p.label}</span>
               <span style={{ color: '#64748b', fontSize: '0.68rem', fontFamily: 'monospace' }}>[{p.category}]</span>
             </button>
           ))}

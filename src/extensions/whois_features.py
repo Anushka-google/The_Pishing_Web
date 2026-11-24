@@ -14,6 +14,9 @@ import os
 import sys
 import time
 import re
+import json
+import urllib.request
+import urllib.error
 from datetime import datetime, timezone, timedelta
 from typing import Dict, Any, Optional
 from urllib.parse import urlparse
@@ -27,31 +30,36 @@ if PROJECT_ROOT not in sys.path:
 class WHOISFeatureExtractor:
     """
     Enriches URLs with domain registration metadata, age calculation, and registrar risk signals.
+    Uses RFC 7483 RDAP lookups with strict timeout protection and neutral UNKNOWN fallbacks.
+    Never fabricates domain age or registrar details based on lexical keywords.
     """
     KNOWN_PRIVACY_PROVIDERS = {
         "whoisguard", "domains by proxy", "privacy protect", "contact privacy",
         "withheldforprivacy", "redacted for privacy", "super privacy service"
     }
 
-    # Reference seed ages for standard benchmark domains and test domains
+    # Reference seed registrations for major verified web infrastructure
     MOCK_REFERENCE_REGISTRATIONS: Dict[str, Dict[str, Any]] = {
         "google.com": {"created_date": "1997-09-15T00:00:00Z", "registrar": "MarkMonitor Inc."},
         "microsoft.com": {"created_date": "1991-05-02T00:00:00Z", "registrar": "MarkMonitor Inc."},
         "apple.com": {"created_date": "1987-02-19T00:00:00Z", "registrar": "CSC Corporate Domains"},
         "paypal.com": {"created_date": "1999-07-15T00:00:00Z", "registrar": "Corporation Service Company"},
         "amazon.com": {"created_date": "1994-11-01T00:00:00Z", "registrar": "Amazon Registrar Inc."},
-        "github.com": {"created_date": "2007-10-09T00:00:00Z", "registrar": "MarkMonitor Inc."}
+        "github.com": {"created_date": "2007-10-09T00:00:00Z", "registrar": "MarkMonitor Inc."},
+        "wikipedia.org": {"created_date": "2001-01-13T00:00:00Z", "registrar": "MarkMonitor Inc."}
     }
 
     def __init__(
         self,
         cache_ttl_seconds: int = 86400,  # 24 hours
-        timeout_seconds: float = 0.30
+        timeout_seconds: float = 0.35
     ):
         self.cache_ttl_seconds = cache_ttl_seconds
         self.timeout_seconds = timeout_seconds
         self._cache: Dict[str, Dict[str, Any]] = {}
-        self.tld_extractor = tldextract.TLDExtract()
+        cache_dir = os.path.join(PROJECT_ROOT, ".cache")
+        os.makedirs(cache_dir, exist_ok=True)
+        self.tld_extractor = tldextract.TLDExtract(cache_dir=cache_dir, suffix_list_urls=None)
 
     def _extract_domain(self, url: str) -> str:
         raw = url.strip()
@@ -106,55 +114,88 @@ class WHOISFeatureExtractor:
             self._cache[domain] = {"data": res, "expires_at": now + self.cache_ttl_seconds}
             return res
 
-        # For unknown domains in production:
-        # If simulated threat domain pattern or newly registered indicators:
-        # Simulate freshly registered domain (< 7 days) if domain contains disposable tokens
-        disposable_tlds = {"xyz", "top", "tk", "cc", "vip", "online", "ru", "gq"}
-        ext = self.tld_extractor(domain)
-        is_disposable_tld = ext.suffix in disposable_tlds
+        # Genuine RDAP Query Attempt (RFC 7483)
+        created_str = None
+        age_days = None
+        registrar_name = "Unknown"
+        is_privacy = False
+        lookup_status = "UNKNOWN"
 
-        if is_disposable_tld or any(k in domain for k in ["verify", "update", "secure", "auth", "login"]):
-            # Freshly created domain heuristic
-            age_days = 4  # 4 days old (critical phishing indicator)
-            created_dt = datetime.now(timezone.utc) - timedelta(days=age_days)
-            created_str = created_dt.isoformat()
-            is_privacy = True
-            registrar = "NameCheap Inc. / WithheldForPrivacy"
-        else:
-            # Established neutral domain default
-            age_days = 450
-            created_dt = datetime.now(timezone.utc) - timedelta(days=age_days)
-            created_str = created_dt.isoformat()
-            is_privacy = False
-            registrar = "Generic Registrar LLC"
+        try:
+            rdap_url = f"https://rdap.org/domain/{domain}"
+            req = urllib.request.Request(
+                rdap_url,
+                headers={"User-Agent": "PhishIntel-RDAP-Client/1.0", "Accept": "application/rdap+json, application/json"}
+            )
+            with urllib.request.urlopen(req, timeout=self.timeout_seconds) as resp:
+                if resp.status == 200:
+                    rdap_data = json.loads(resp.read().decode("utf-8"))
+                    # Extract registration / created event
+                    for event in rdap_data.get("events", []):
+                        if event.get("eventAction") in ("registration", "created"):
+                            created_str = event.get("eventDate")
+                            break
+
+                    # Extract registrar name
+                    for entity in rdap_data.get("entities", []):
+                        if "registrar" in entity.get("roles", []):
+                            vcard = entity.get("vcardArray", [])
+                            if len(vcard) > 1 and isinstance(vcard[1], list):
+                                for item in vcard[1]:
+                                    if len(item) > 3 and item[0] == "fn":
+                                        registrar_name = str(item[3])
+                                        break
+                            if registrar_name != "Unknown":
+                                break
+
+                    if created_str:
+                        # Clean timestamp
+                        clean_ts = created_str.replace("Z", "+00:00")
+                        created_dt = datetime.fromisoformat(clean_ts)
+                        now_dt = datetime.now(timezone.utc)
+                        age_days = max(1, (now_dt - created_dt).days)
+                        lookup_status = "SUCCESS"
+        except Exception:
+            # On network timeout, RDAP 404/429, or restricted network:
+            # Fallback to strict neutral UNKNOWN with zero penalty
+            created_str = None
+            age_days = None
+            lookup_status = "UNKNOWN"
 
         elapsed_ms = (time.perf_counter() - t0) * 1000.0
+
+        is_new = bool(age_days is not None and age_days < 14)
+        is_fresh = bool(age_days is not None and age_days < 90)
+        is_mature = bool(age_days is not None and age_days >= 365)
 
         res = {
             "domain": domain,
             "creation_date": created_str,
             "age_days": age_days,
-            "is_newly_registered": bool(age_days < 14),
-            "is_fresh_domain": bool(age_days < 90),
-            "is_mature_domain": bool(age_days >= 365),
-            "registrar": registrar,
+            "is_newly_registered": is_new,
+            "is_fresh_domain": is_fresh,
+            "is_mature_domain": is_mature,
+            "registrar": registrar_name,
             "is_privacy_protected": is_privacy,
             "whois_risk_score": self._calculate_age_risk(age_days, is_privacy=is_privacy),
             "lookup_latency_ms": round(elapsed_ms, 2),
-            "status": "ESTIMATED_PROFILE"
+            "status": lookup_status
         }
 
         self._cache[domain] = {"data": res, "expires_at": now + self.cache_ttl_seconds}
         return res
 
-    def _calculate_age_risk(self, age_days: int, is_privacy: bool = False) -> float:
+    def _calculate_age_risk(self, age_days: Optional[int], is_privacy: bool = False) -> float:
         """
         Computes calibrated WHOIS domain risk score in [0.0, 1.0]:
-        - Age < 14 days  : +0.60 (High risk - brand new infrastructure)
-        - Age < 90 days  : +0.30 (Elevated caution)
-        - Age >= 365 days: -0.10 (Established authority baseline)
-        - Privacy Proxy  : +0.10
+        - Unknown / unavailable: 0.0 (Strict neutrality)
+        - Age < 14 days  : +0.65 (High risk - brand new infrastructure)
+        - Age < 90 days  : +0.35 (Elevated caution)
+        - Age >= 365 days: +0.05 (Established baseline)
         """
+        if age_days is None:
+            return 0.0
+
         if age_days < 14:
             base = 0.65
         elif age_days < 90:
@@ -173,14 +214,14 @@ class WHOISFeatureExtractor:
         return {
             "domain": domain,
             "creation_date": None,
-            "age_days": -1,
+            "age_days": None,
             "is_newly_registered": False,
             "is_fresh_domain": False,
             "is_mature_domain": False,
             "registrar": "None",
             "is_privacy_protected": False,
-            "whois_risk_score": 0.5,
+            "whois_risk_score": 0.0,
             "lookup_latency_ms": 0.0,
-            "status": "INVALID",
+            "status": "UNKNOWN",
             "reason": reason
         }

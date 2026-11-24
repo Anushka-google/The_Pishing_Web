@@ -1,0 +1,450 @@
+[
+  {
+    "scenario": "Google.com",
+    "response": {
+      "url": "https://www.google.com",
+      "prediction": "legitimate",
+      "final_risk_level": "LOW",
+      "final_action": "ALLOW",
+      "recommendation": "Verified safe destination. Conforms to trusted web security standards.",
+      "ml_probability": 0.0,
+      "composite_threat_score": 0.0,
+      "fused_probability": 0.0,
+      "boundary_separation_margin": 0.5,
+      "reputation": {
+        "domain": "google.com",
+        "verdict": "BENIGN",
+        "reputation_score": -1.0,
+        "source": "Tranco_Authority_Whitelist",
+        "confidence": 0.98,
+        "reason": "Registered domain is a verified high-volume authority domain."
+      },
+      "dns": {
+        "hostname": "www.google.com",
+        "resolves": null,
+        "ip_count": 0,
+        "resolved_ips": [],
+        "has_mx_record": false,
+        "is_fast_flux_suspect": false,
+        "dns_risk_score": 0.0,
+        "lookup_latency_ms": 2.9,
+        "status": "SERVFAIL",
+        "reason": "DNS server returned SERVFAIL or no nameservers available."
+      },
+      "whois": {
+        "domain": "google.com",
+        "creation_date": "1997-09-15T00:00:00Z",
+        "age_days": 10661,
+        "is_newly_registered": false,
+        "is_fresh_domain": false,
+        "is_mature_domain": true,
+        "registrar": "MarkMonitor Inc.",
+        "is_privacy_protected": false,
+        "whois_risk_score": 0.05,
+        "lookup_latency_ms": 0.02,
+        "status": "SUCCESS"
+      },
+      "delta_breakdown": {
+        "base_logit": -13.8155,
+        "delta_reputation": -3.5,
+        "delta_dns": 0.0,
+        "delta_whois": -0.15,
+        "total_delta": -3.65,
+        "fused_logit": -17.4655
+      },
+      "execution_time_ms": 283.35
+    }
+  },
+  {
+    "scenario": "Wikipedia.org",
+    "response": {
+      "url": "https://www.wikipedia.org",
+      "prediction": "legitimate",
+      "final_risk_level": "LOW",
+      "final_action": "ALLOW",
+      "recommendation": "Verified safe destination. Conforms to trusted web security standards.",
+      "ml_probability": 0.0,
+      "composite_threat_score": 0.0,
+      "fused_probability": 0.0,
+      "boundary_separation_margin": 0.5,
+      "reputation": {
+        "domain": "wikipedia.org",
+        "verdict": "BENIGN",
+        "reputation_score": -1.0,
+        "source": "Tranco_Authority_Whitelist",
+        "confidence": 0.98,
+        "reason": "Registered domain is a verified high-volume authority domain."
+      },
+      "dns": {
+        "hostname": "www.wikipedia.org",
+        "resolves": null,
+        "ip_count": 0,
+        "resolved_ips": [],
+        "has_mx_record": false,
+        "is_fast_flux_suspect": false,
+        "dns_risk_score": 0.0,
+        "lookup_latency_ms": 1.77,
+        "status": "SERVFAIL",
+        "reason": "DNS server returned SERVFAIL or no nameservers available."
+      },
+      "whois": {
+        "domain": "wikipedia.org",
+        "creation_date": "2001-01-13T00:00:00Z",
+        "age_days": 9445,
+        "is_newly_registered": false,
+        "is_fresh_domain": false,
+        "is_mature_domain": true,
+        "registrar": "MarkMonitor Inc.",
+        "is_privacy_protected": false,
+        "whois_risk_score": 0.05,
+        "lookup_latency_ms": 0.02,
+        "status": "SUCCESS"
+      },
+      "delta_breakdown": {
+        "base_logit": -13.8155,
+        "delta_reputation": -3.5,
+        "delta_dns": 0.0,
+        "delta_whois": -0.15,
+        "total_delta": -3.65,
+        "fused_logit": -17.4655
+      },
+      "execution_time_ms": 47.02
+    }
+  },
+  {
+    "scenario": "PayPal Cloud Attack",
+    "response": {
+      "url": "https://paypal.com-account-update.net/login",
+      "prediction": "legitimate",
+      "final_risk_level": "LOW",
+      "final_action": "ALLOW",
+      "recommendation": "Verified safe destination. Conforms to trusted web security standards.",
+      "ml_probability": 0.22,
+      "composite_threat_score": 0.22,
+      "fused_probability": 0.22,
+      "boundary_separation_margin": 0.28,
+      "reputation": {
+        "domain": "com-account-update.net",
+        "verdict": "UNKNOWN",
+        "reputation_score": 0.0,
+        "source": "Neutral_Resolver",
+        "confidence": 0.5,
+        "reason": "Domain has no active flags in external intelligence databases."
+      },
+      "dns": {
+        "hostname": "paypal.com-account-update.net",
+        "resolves": null,
+        "ip_count": 0,
+        "resolved_ips": [],
+        "has_mx_record": false,
+        "is_fast_flux_suspect": false,
+        "dns_risk_score": 0.0,
+        "lookup_latency_ms": 0.75,
+        "status": "SERVFAIL",
+        "reason": "DNS server returned SERVFAIL or no nameservers available."
+      },
+      "whois": {
+        "domain": "com-account-update.net",
+        "creation_date": null,
+        "age_days": null,
+        "is_newly_registered": false,
+        "is_fresh_domain": false,
+        "is_mature_domain": false,
+        "registrar": "Unknown",
+        "is_privacy_protected": false,
+        "whois_risk_score": 0.0,
+        "lookup_latency_ms": 83.46,
+        "status": "UNKNOWN"
+      },
+      "delta_breakdown": {
+        "base_logit": -1.2657,
+        "delta_reputation": 0.0,
+        "delta_dns": 0.0,
+        "delta_whois": 0.0,
+        "total_delta": 0.0,
+        "fused_logit": -1.2657
+      },
+      "execution_time_ms": 120.89
+    }
+  },
+  {
+    "scenario": "Direct IP URL",
+    "response": {
+      "url": "http://176.77.46.141:8080/bin.sh",
+      "prediction": "phishing",
+      "final_risk_level": "HIGH",
+      "final_action": "BLOCK",
+      "recommendation": "Critical phishing indicators identified by calibrated ML model. Block access immediately.",
+      "ml_probability": 0.6671,
+      "composite_threat_score": 0.6671,
+      "fused_probability": 0.6671,
+      "boundary_separation_margin": 0.1671,
+      "reputation": {
+        "domain": "176.77.46.141",
+        "verdict": "UNKNOWN",
+        "reputation_score": 0.0,
+        "source": "Neutral_Resolver",
+        "confidence": 0.5,
+        "reason": "Domain has no active flags in external intelligence databases."
+      },
+      "dns": {
+        "hostname": "176.77.46.141",
+        "resolves": null,
+        "ip_count": 0,
+        "resolved_ips": [],
+        "has_mx_record": false,
+        "is_fast_flux_suspect": false,
+        "dns_risk_score": 0.0,
+        "lookup_latency_ms": 1.34,
+        "status": "SERVFAIL",
+        "reason": "DNS server returned SERVFAIL or no nameservers available."
+      },
+      "whois": {
+        "domain": "176.77.46.141",
+        "creation_date": null,
+        "age_days": null,
+        "is_newly_registered": false,
+        "is_fresh_domain": false,
+        "is_mature_domain": false,
+        "registrar": "Unknown",
+        "is_privacy_protected": false,
+        "whois_risk_score": 0.0,
+        "lookup_latency_ms": 20.93,
+        "status": "UNKNOWN"
+      },
+      "delta_breakdown": {
+        "base_logit": 0.6951,
+        "delta_reputation": 0.0,
+        "delta_dns": 0.0,
+        "delta_whois": 0.0,
+        "total_delta": 0.0,
+        "fused_logit": 0.6951
+      },
+      "execution_time_ms": 56.95
+    }
+  },
+  {
+    "scenario": "Newly registered domain",
+    "response": {
+      "url": "https://update-account-portal.xyz/login",
+      "prediction": "legitimate",
+      "final_risk_level": "LOW",
+      "final_action": "ALLOW",
+      "recommendation": "Verified safe destination. Conforms to trusted web security standards.",
+      "ml_probability": 0.19,
+      "composite_threat_score": 0.19,
+      "fused_probability": 0.19,
+      "boundary_separation_margin": 0.31,
+      "reputation": {
+        "domain": "update-account-portal.xyz",
+        "verdict": "UNKNOWN",
+        "reputation_score": 0.0,
+        "source": "Neutral_Resolver",
+        "confidence": 0.5,
+        "reason": "Domain has no active flags in external intelligence databases."
+      },
+      "dns": {
+        "hostname": "update-account-portal.xyz",
+        "resolves": null,
+        "ip_count": 0,
+        "resolved_ips": [],
+        "has_mx_record": false,
+        "is_fast_flux_suspect": false,
+        "dns_risk_score": 0.0,
+        "lookup_latency_ms": 1.13,
+        "status": "SERVFAIL",
+        "reason": "DNS server returned SERVFAIL or no nameservers available."
+      },
+      "whois": {
+        "domain": "update-account-portal.xyz",
+        "creation_date": null,
+        "age_days": null,
+        "is_newly_registered": false,
+        "is_fresh_domain": false,
+        "is_mature_domain": false,
+        "registrar": "Unknown",
+        "is_privacy_protected": false,
+        "whois_risk_score": 0.0,
+        "lookup_latency_ms": 6.39,
+        "status": "UNKNOWN"
+      },
+      "delta_breakdown": {
+        "base_logit": -1.45,
+        "delta_reputation": 0.0,
+        "delta_dns": 0.0,
+        "delta_whois": 0.0,
+        "total_delta": 0.0,
+        "fused_logit": -1.45
+      },
+      "execution_time_ms": 41.96
+    }
+  },
+  {
+    "scenario": "NXDOMAIN domain",
+    "response": {
+      "url": "https://thisdomaindoesnotexist123456789.com",
+      "prediction": "phishing",
+      "final_risk_level": "MEDIUM",
+      "final_action": "CAUTION",
+      "recommendation": "Elevated threat indicators detected across domain characteristics. Exercise caution.",
+      "ml_probability": 0.5692,
+      "composite_threat_score": 0.5692,
+      "fused_probability": 0.5692,
+      "boundary_separation_margin": 0.0692,
+      "reputation": {
+        "domain": "thisdomaindoesnotexist123456789.com",
+        "verdict": "UNKNOWN",
+        "reputation_score": 0.0,
+        "source": "Neutral_Resolver",
+        "confidence": 0.5,
+        "reason": "Domain has no active flags in external intelligence databases."
+      },
+      "dns": {
+        "hostname": "thisdomaindoesnotexist123456789.com",
+        "resolves": null,
+        "ip_count": 0,
+        "resolved_ips": [],
+        "has_mx_record": false,
+        "is_fast_flux_suspect": false,
+        "dns_risk_score": 0.0,
+        "lookup_latency_ms": 1.56,
+        "status": "SERVFAIL",
+        "reason": "DNS server returned SERVFAIL or no nameservers available."
+      },
+      "whois": {
+        "domain": "thisdomaindoesnotexist123456789.com",
+        "creation_date": null,
+        "age_days": null,
+        "is_newly_registered": false,
+        "is_fresh_domain": false,
+        "is_mature_domain": false,
+        "registrar": "Unknown",
+        "is_privacy_protected": false,
+        "whois_risk_score": 0.0,
+        "lookup_latency_ms": 6.54,
+        "status": "UNKNOWN"
+      },
+      "delta_breakdown": {
+        "base_logit": 0.2786,
+        "delta_reputation": 0.0,
+        "delta_dns": 0.0,
+        "delta_whois": 0.0,
+        "total_delta": 0.0,
+        "fused_logit": 0.2786
+      },
+      "execution_time_ms": 54.8
+    }
+  },
+  {
+    "scenario": "Unknown reputation domain",
+    "response": {
+      "url": "https://sample-personal-blog-123.org",
+      "prediction": "legitimate",
+      "final_risk_level": "LOW",
+      "final_action": "ALLOW",
+      "recommendation": "Verified safe destination. Conforms to trusted web security standards.",
+      "ml_probability": 0.13,
+      "composite_threat_score": 0.13,
+      "fused_probability": 0.13,
+      "boundary_separation_margin": 0.37,
+      "reputation": {
+        "domain": "sample-personal-blog-123.org",
+        "verdict": "UNKNOWN",
+        "reputation_score": 0.0,
+        "source": "Neutral_Resolver",
+        "confidence": 0.5,
+        "reason": "Domain has no active flags in external intelligence databases."
+      },
+      "dns": {
+        "hostname": "sample-personal-blog-123.org",
+        "resolves": null,
+        "ip_count": 0,
+        "resolved_ips": [],
+        "has_mx_record": false,
+        "is_fast_flux_suspect": false,
+        "dns_risk_score": 0.0,
+        "lookup_latency_ms": 1.11,
+        "status": "SERVFAIL",
+        "reason": "DNS server returned SERVFAIL or no nameservers available."
+      },
+      "whois": {
+        "domain": "sample-personal-blog-123.org",
+        "creation_date": null,
+        "age_days": null,
+        "is_newly_registered": false,
+        "is_fresh_domain": false,
+        "is_mature_domain": false,
+        "registrar": "Unknown",
+        "is_privacy_protected": false,
+        "whois_risk_score": 0.0,
+        "lookup_latency_ms": 6.7,
+        "status": "UNKNOWN"
+      },
+      "delta_breakdown": {
+        "base_logit": -1.901,
+        "delta_reputation": 0.0,
+        "delta_dns": 0.0,
+        "delta_whois": 0.0,
+        "total_delta": 0.0,
+        "fused_logit": -1.901
+      },
+      "execution_time_ms": 48.51
+    }
+  },
+  {
+    "scenario": "Randomized token URL",
+    "response": {
+      "url": "https://legit-service.org/auth?token=8a7df6b5c4d3e2f1a0b9c8d7e6f5",
+      "prediction": "legitimate",
+      "final_risk_level": "LOW",
+      "final_action": "ALLOW",
+      "recommendation": "Verified safe destination. Conforms to trusted web security standards.",
+      "ml_probability": 0.21,
+      "composite_threat_score": 0.21,
+      "fused_probability": 0.21,
+      "boundary_separation_margin": 0.29,
+      "reputation": {
+        "domain": "legit-service.org",
+        "verdict": "UNKNOWN",
+        "reputation_score": 0.0,
+        "source": "Neutral_Resolver",
+        "confidence": 0.5,
+        "reason": "Domain has no active flags in external intelligence databases."
+      },
+      "dns": {
+        "hostname": "legit-service.org",
+        "resolves": null,
+        "ip_count": 0,
+        "resolved_ips": [],
+        "has_mx_record": false,
+        "is_fast_flux_suspect": false,
+        "dns_risk_score": 0.0,
+        "lookup_latency_ms": 1.61,
+        "status": "SERVFAIL",
+        "reason": "DNS server returned SERVFAIL or no nameservers available."
+      },
+      "whois": {
+        "domain": "legit-service.org",
+        "creation_date": null,
+        "age_days": null,
+        "is_newly_registered": false,
+        "is_fresh_domain": false,
+        "is_mature_domain": false,
+        "registrar": "Unknown",
+        "is_privacy_protected": false,
+        "whois_risk_score": 0.0,
+        "lookup_latency_ms": 7.81,
+        "status": "UNKNOWN"
+      },
+      "delta_breakdown": {
+        "base_logit": -1.3249,
+        "delta_reputation": 0.0,
+        "delta_dns": 0.0,
+        "delta_whois": 0.0,
+        "total_delta": 0.0,
+        "fused_logit": -1.3249
+      },
+      "execution_time_ms": 65.68
+    }
+  }
+]

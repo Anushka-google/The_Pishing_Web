@@ -266,11 +266,14 @@ class EnhancedAnalyzeResponse(BaseModel):
     final_risk_level: str
     final_action: str
     recommendation: str
-    ml_probability: float
-    fused_probability: float
+    ml_probability: float = Field(..., description="Calibrated Random Forest posterior probability P(Y=1|X) [0.0 - 1.0].")
+    composite_threat_score: float = Field(..., description="Multi-signal regularized Bayesian threat score [0.0 - 1.0].")
+    fused_probability: float = Field(..., description="Deprecated backward-compatible alias for composite_threat_score.")
+    boundary_separation_margin: float = Field(..., description="Absolute distance |composite_threat_score - 0.50| from classification boundary.")
     reputation: Optional[Dict[str, Any]] = None
     dns: Optional[Dict[str, Any]] = None
     whois: Optional[Dict[str, Any]] = None
+    delta_breakdown: Optional[Dict[str, Any]] = None
     execution_time_ms: float
 
 

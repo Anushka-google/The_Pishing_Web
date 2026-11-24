@@ -33,6 +33,7 @@ from src.extensions.reputation import DomainReputationEngine
 from src.extensions.dns_features import DNSFeatureExtractor
 from src.extensions.whois_features import WHOISFeatureExtractor
 from src.extensions.email_analyzer import EmailRiskAnalyzer
+from src.extensions.fusion import RegularizedBayesianFusion
 from database.connection import get_db
 from database.repository import PredictionRepository
 from api.logging_config import logger, sanitize_url
@@ -66,6 +67,14 @@ _reputation_engine: Optional[DomainReputationEngine] = None
 _dns_extractor: Optional[DNSFeatureExtractor] = None
 _whois_extractor: Optional[WHOISFeatureExtractor] = None
 _email_analyzer: Optional[EmailRiskAnalyzer] = None
+_fusion_engine: Optional[RegularizedBayesianFusion] = None
+
+
+def get_fusion_engine() -> RegularizedBayesianFusion:
+    global _fusion_engine
+    if _fusion_engine is None:
+        _fusion_engine = RegularizedBayesianFusion()
+    return _fusion_engine
 
 
 def get_reputation_engine() -> DomainReputationEngine:
@@ -602,87 +611,78 @@ async def evaluate_retraining_justification(
 @router.post("/analyze/enhanced", response_model=EnhancedAnalyzeResponse, tags=["Advanced Extensions"])
 async def analyze_url_enhanced(payload: EnhancedAnalyzeRequest, request: Request):
     """
-    Phase 29: Advanced Multi-Signal URL Inspection.
+    Phase 35: Statistically Calibrated Multi-Signal Bayesian Inspection.
     Combines:
-    - ML Statistical Inference (Phase 1-14 Champion Model)
-    - External Domain Reputation Feeds & Whitelist (35.1)
-    - DNS Record & Resolution Characterization (35.2)
-    - WHOIS Domain Age & Registration Heuristics (35.3)
+    - ML Statistical Inference (Calibrated Champion Model posterior P(Y=1|X))
+    - Domain Reputation Feeds & Authority Whitelists (35.1)
+    - DNS Resolution & RCODE-Aware Status (35.2)
+    - WHOIS / RDAP Domain Age Registration Metadata (35.3)
+    - Regularized Log-Odds Evidence Accumulation (35.4)
     """
     t0 = time.perf_counter()
     predictor = get_predictor()
     reputation_engine = get_reputation_engine()
     dns_extractor = get_dns_extractor()
     whois_extractor = get_whois_extractor()
+    fusion_engine = get_fusion_engine()
 
-    # 1. Base ML Prediction
+    # 1. Base ML Prediction (Strict separation of unadulterated ML posterior)
     ml_res = predictor.predict(payload.url, include_explanation=False)
     ml_prob = ml_res["probability"]
 
-    # 2. Domain Reputation Fusion (35.1)
+    # 2. Domain Reputation Lookup (35.1)
     rep_res = None
-    fused_prob = ml_prob
     if payload.enable_reputation:
-        rep_fusion = reputation_engine.fuse_with_ml(ml_prob, payload.url)
-        rep_res = rep_fusion["reputation"]
-        fused_prob = rep_fusion["fused_probability"]
+        rep_res = reputation_engine.lookup_reputation(payload.url)
 
-    # 3. DNS Features (35.2)
+    # 3. DNS Feature Extraction (35.2)
     dns_res = None
     if payload.enable_dns:
         dns_res = dns_extractor.extract_dns_features(payload.url)
-        if not dns_res["resolves"] and fused_prob < 0.65:
-            fused_prob = min(0.95, fused_prob + 0.20)
-        elif dns_res["is_fast_flux_suspect"]:
-            fused_prob = min(0.98, fused_prob + 0.35)
 
     # 4. WHOIS & Domain Age (35.3)
     whois_res = None
     if payload.enable_whois:
         whois_res = whois_extractor.extract_whois_features(payload.url)
-        if whois_res["is_newly_registered"] and fused_prob < 0.70:
-            fused_prob = min(0.95, fused_prob + 0.30)
 
-    fused_prob = round(float(fused_prob), 4)
-
-    # Calibrate final risk tier
-    if fused_prob >= 0.65:
-        final_risk = "HIGH"
-        final_action = "BLOCK"
-        recommendation = "Multi-signal threat confirmed (ML score + external intelligence). Block access immediately."
-    elif fused_prob >= 0.40:
-        final_risk = "MEDIUM"
-        final_action = "CAUTION"
-        recommendation = "Anomalies detected across domain characteristics. Exercise caution."
-    else:
-        final_risk = "LOW"
-        final_action = "ALLOW"
-        recommendation = "Verified safe. Domain conforms to trusted web standards."
+    # 5. Regularized Bayesian Log-Odds Fusion (35.4)
+    fusion_res = fusion_engine.fuse(
+        ml_probability=ml_prob,
+        reputation=rep_res,
+        dns=dns_res,
+        whois=whois_res,
+        url=payload.url
+    )
 
     elapsed_ms = (time.perf_counter() - t0) * 1000.0
 
     logger.info(
-        f"Enhanced URL analysis completed: final_risk={final_risk}, fused_prob={fused_prob}",
+        f"Enhanced URL analysis completed: final_risk={fusion_res['final_risk_level']}, "
+        f"composite_threat_score={fusion_res['composite_threat_score']}, ml_probability={fusion_res['ml_probability']}",
         extra={
             "request_id": getattr(request.state, "request_id", None),
             "endpoint": "POST /analyze/enhanced",
             "url": sanitize_url(payload.url),
-            "fused_prob": fused_prob,
-            "final_risk": final_risk
+            "composite_threat_score": fusion_res["composite_threat_score"],
+            "ml_probability": fusion_res["ml_probability"],
+            "final_risk": fusion_res["final_risk_level"]
         }
     )
 
     return EnhancedAnalyzeResponse(
         url=payload.url,
-        prediction="phishing" if fused_prob >= 0.50 else "legitimate",
-        final_risk_level=final_risk,
-        final_action=final_action,
-        recommendation=recommendation,
-        ml_probability=round(ml_prob, 4),
-        fused_probability=fused_prob,
+        prediction="phishing" if fusion_res["composite_threat_score"] >= 0.50 else "legitimate",
+        final_risk_level=fusion_res["final_risk_level"],
+        final_action=fusion_res["final_action"],
+        recommendation=fusion_res["recommendation"],
+        ml_probability=fusion_res["ml_probability"],
+        composite_threat_score=fusion_res["composite_threat_score"],
+        fused_probability=fusion_res["fused_probability"],
+        boundary_separation_margin=fusion_res["boundary_separation_margin"],
         reputation=rep_res,
         dns=dns_res,
         whois=whois_res,
+        delta_breakdown=fusion_res["delta_breakdown"],
         execution_time_ms=round(elapsed_ms, 2)
     )
 

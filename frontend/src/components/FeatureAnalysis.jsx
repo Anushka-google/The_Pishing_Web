@@ -92,6 +92,24 @@ export default function FeatureAnalysis({ explanation, rawFeatures }) {
       {/* TAB 1: SHAP EXPLAINABILITY */}
       {activeTab === 'shap' && (
         <div>
+          <div style={{
+            background: 'rgba(56, 189, 248, 0.08)',
+            border: '1px solid rgba(56, 189, 248, 0.25)',
+            borderRadius: '8px',
+            padding: '0.65rem 0.95rem',
+            marginBottom: '1rem',
+            fontSize: '0.75rem',
+            color: '#94a3b8',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.65rem'
+          }}>
+            <ShieldCheck size={16} color="#38bdf8" />
+            <span>
+              <strong style={{ color: '#38bdf8' }}>TreeSHAP Mathematical Attribution:</strong> Explains the base 22-dimensional Random Forest model posterior. External DNS, WHOIS, and threat feed intelligence are evaluated separately via Bayesian log-odds fusion.
+            </span>
+          </div>
+
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.25rem', marginBottom: '1.25rem' }}>
             {/* Risk Contributors */}
             <div style={{ background: '#070b14', padding: '1.1rem', borderRadius: '10px', border: '1px solid rgba(239, 68, 68, 0.25)' }}>

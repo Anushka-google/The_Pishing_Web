@@ -108,7 +108,9 @@ class DomainReputationEngine:
         self.malicious_feed: Set[str] = {d.lower().strip() for d in (malicious_feed or self.DEFAULT_MALICIOUS_DOMAINS)}
         self.benign_feed: Set[str] = {d.lower().strip() for d in (benign_feed or self.DEFAULT_BENIGN_AUTHORITIES)}
         self.cache = ReputationCache(ttl_seconds=cache_ttl_seconds)
-        self.tld_extractor = tldextract.TLDExtract()
+        cache_dir = os.path.join(PROJECT_ROOT, ".cache")
+        os.makedirs(cache_dir, exist_ok=True)
+        self.tld_extractor = tldextract.TLDExtract(cache_dir=cache_dir, suffix_list_urls=None)
 
     def add_malicious_domain(self, domain_or_url: str) -> None:
         """Adds a verified threat domain to the feed."""

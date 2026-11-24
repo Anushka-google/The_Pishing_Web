@@ -91,3 +91,7 @@ frontend/.next/
 # Structured logs
 logs/*.log
 !logs/.gitkeep
+
+# Local transient cache and backups
+.cache/
+backups/

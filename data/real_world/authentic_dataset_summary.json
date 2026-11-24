@@ -1,0 +1,18 @@
+{
+  "total_authentic_samples": 20013,
+  "phishing_count": 9998,
+  "legitimate_count": 10015,
+  "phishing_ratio": 0.4996,
+  "unique_registered_domains": 14889,
+  "exact_duplicates_removed": 1,
+  "near_duplicate_clusters": 206,
+  "near_duplicate_urls": 603,
+  "sources": {
+    "Tranco-Top1M": 10000,
+    "URLhaus": 5000,
+    "PhishTank": 4998,
+    "Enterprise-SSO-HardNegative": 15
+  },
+  "output_features_path": "data/real_world/features_real_world.csv",
+  "output_urls_path": "data/real_world/urls_authentic.csv"
+}

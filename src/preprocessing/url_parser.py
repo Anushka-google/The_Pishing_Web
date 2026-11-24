@@ -44,7 +44,10 @@ class URLParser:
     Avoids brittle string splitting by combining Python's urlparse with tldextract and ipaddress.
     """
     def __init__(self):
-        self._tld_extractor = tldextract.TLDExtract()
+        import os
+        cache_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), ".cache")
+        os.makedirs(cache_dir, exist_ok=True)
+        self._tld_extractor = tldextract.TLDExtract(cache_dir=cache_dir, suffix_list_urls=None)
 
     def parse(self, raw_url: str) -> ParsedURL:
         if not raw_url or not isinstance(raw_url, str):

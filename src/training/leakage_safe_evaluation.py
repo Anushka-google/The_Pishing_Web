@@ -6,8 +6,15 @@ Enforces: Train Domains ∩ Test Domains = Ø (Zero Domain Leakage).
 """
 
 import os
+import sys
 import json
 import time
+
+# Ensure project root is in sys.path
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
+
 from typing import Dict, Any, List, Tuple
 from urllib.parse import urlparse
 import pandas as pd
@@ -35,9 +42,13 @@ class LeakageSafeEvaluator:
     2. Domain-Grouped Split (Proves true generalization to unseen zero-day domains)
     """
     def __init__(self, features_csv: str = "data/processed/features.csv", random_state: int = 42):
+        if not os.path.isabs(features_csv):
+            features_csv = os.path.join(PROJECT_ROOT, features_csv)
         self.features_csv = features_csv
         self.random_state = random_state
-        self.tld_extractor = tldextract.TLDExtract()
+        cache_dir = os.path.join(PROJECT_ROOT, ".cache")
+        os.makedirs(cache_dir, exist_ok=True)
+        self.tld_extractor = tldextract.TLDExtract(cache_dir=cache_dir, suffix_list_urls=None)
 
         if not os.path.exists(features_csv):
             raise FileNotFoundError(f"Feature dataset not found at {features_csv}")

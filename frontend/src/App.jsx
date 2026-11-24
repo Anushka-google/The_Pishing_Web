@@ -8,6 +8,7 @@ import FeatureAnalysis from './components/FeatureAnalysis';
 import EmailAnalyzerTab from './components/EmailAnalyzerTab';
 import TelemetryTab from './components/TelemetryTab';
 import HistoryTable from './components/HistoryTable';
+import CyberBackground from './components/CyberBackground';
 
 const API_BASE = import.meta.env.VITE_API_URL !== undefined 
   ? import.meta.env.VITE_API_URL 
@@ -84,14 +85,14 @@ export default function App() {
     }
   };
 
-  // URL Analysis (Standard or Phase 29 Multi-Signal Enhanced Mode)
+  // URL Analysis (Standard or Multi-Signal Enhanced Mode)
   const handleAnalyze = async (url) => {
     setIsLoading(true);
     setError(null);
 
     try {
       if (enhancedMode) {
-        // Phase 29 Multi-Signal Enhanced Inspection
+        // Multi-Signal Enhanced Inspection
         const res = await fetch(`${API_BASE}/analyze/enhanced`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -126,14 +127,18 @@ export default function App() {
         // Fuse both responses
         setResult({
           ...data,
-          probability: data.ml_probability,
+          ml_probability: data.ml_probability,
+          composite_threat_score: data.composite_threat_score,
           fused_probability: data.fused_probability,
+          boundary_separation_margin: data.boundary_separation_margin,
+          probability: data.ml_probability,
           risk_level: data.final_risk_level,
           action: data.final_action,
+          is_enhanced_mode: true,
           explanation: baseWithExplanation?.explanation || null,
           features: baseWithExplanation?.features || null,
           metadata: baseWithExplanation?.metadata || {
-            model_name: 'RandomForest + MultiSignal',
+            model_name: 'RandomForest + Bayesian Fusion',
             model_version: modelVersion,
             total_latency_ms: data.execution_time_ms
           }
@@ -168,7 +173,7 @@ export default function App() {
     }
   };
 
-  // Phase 29.4 Email Phishing Analysis
+  // Email Phishing Analysis
   const handleAnalyzeEmail = async (emailPayload) => {
     setIsEmailLoading(true);
     setEmailError(null);
@@ -202,7 +207,10 @@ export default function App() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: '#050811' }}>
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: '#050914', position: 'relative' }}>
+      {/* Dynamic 3D Cyber Particle Background Canvas */}
+      <CyberBackground />
+
       {/* Cybersecurity Sticky Command Bar */}
       <Navbar
         activeTab={activeTab}
@@ -212,7 +220,7 @@ export default function App() {
       />
 
       {/* Main Command Center Surface */}
-      <main style={{ flex: 1, padding: '2rem 0' }}>
+      <main style={{ flex: 1, padding: '2rem 0', position: 'relative', zIndex: 1 }}>
         <div className="container">
           {/* TAB 1: URL THREAT SCANNER */}
           {activeTab === 'scanner' && (
@@ -220,6 +228,7 @@ export default function App() {
               <HeroBanner
                 totalScans={stats?.total_scans || 0}
                 modelVersion={modelVersion}
+                onExploreClick={() => setActiveTab('telemetry')}
               />
 
               <StatsOverview stats={stats} />
@@ -251,7 +260,7 @@ export default function App() {
             </>
           )}
 
-          {/* TAB 2: EMAIL PHISHING INSPECTOR (PHASE 29.4) */}
+          {/* TAB 2: EMAIL PHISHING INSPECTOR */}
           {activeTab === 'email' && (
             <EmailAnalyzerTab
               onAnalyzeEmail={handleAnalyzeEmail}
@@ -261,7 +270,7 @@ export default function App() {
             />
           )}
 
-          {/* TAB 3: SOC TELEMETRY & DRIFT MONITORING (PHASE 25 & 27) */}
+          {/* TAB 3: SOC TELEMETRY & DRIFT MONITORING */}
           {activeTab === 'telemetry' && (
             <TelemetryTab apiBase={API_BASE} />
           )}
@@ -280,15 +289,18 @@ export default function App() {
 
       {/* SOC Command Center Footer */}
       <footer style={{
-        borderTop: '1px solid #162238',
-        background: 'rgba(5, 8, 17, 0.95)',
-        padding: '1.25rem 0',
+        borderTop: '1px solid #162442',
+        background: 'rgba(5, 9, 20, 0.95)',
+        backdropFilter: 'blur(16px)',
+        padding: '1.4rem 0',
         textAlign: 'center',
         fontSize: '0.75rem',
-        color: '#64748b'
+        color: '#64748b',
+        position: 'relative',
+        zIndex: 2
       }}>
-        <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
-          <span>Phishing Detection & Risk Intelligence Platform — Zero-Leakage Architecture</span>
+        <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.6rem' }}>
+          <span>Phishing Detection & Threat Intelligence Platform — Zero-Leakage Architecture</span>
           <span style={{ fontFamily: 'JetBrains Mono, monospace', color: '#94a3b8' }}>
             ENGINE STATUS: {systemHealth ? 'OPERATIONAL' : 'OFFLINE'} • CALIBRATION: PLATT SCALED
           </span>

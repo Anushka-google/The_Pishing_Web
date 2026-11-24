@@ -19,6 +19,13 @@ from typing import Dict, Any, List, Optional
 from urllib.parse import urlparse
 import tldextract
 
+try:
+    import dns.resolver
+    import dns.exception
+    HAS_DNSPYTHON = True
+except ImportError:
+    HAS_DNSPYTHON = False
+
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
 if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
@@ -71,7 +78,9 @@ class DNSFeatureExtractor:
         self.enable_mock_fallback = enable_mock_fallback
         self.circuit_breaker = DNSCircuitBreaker()
         self._cache: Dict[str, Dict[str, Any]] = {}
-        self.tld_extractor = tldextract.TLDExtract()
+        cache_dir = os.path.join(PROJECT_ROOT, ".cache")
+        os.makedirs(cache_dir, exist_ok=True)
+        self.tld_extractor = tldextract.TLDExtract(cache_dir=cache_dir, suffix_list_urls=None)
 
     def _extract_hostname(self, url: str) -> str:
         raw = url.strip()
@@ -82,8 +91,12 @@ class DNSFeatureExtractor:
 
     def extract_dns_features(self, url: str) -> Dict[str, Any]:
         """
-        Extracts DNS resolution characteristics for the URL's hostname.
-        Returns dictionary of DNS signals and risk indicators.
+        Extracts DNS resolution characteristics with strict RCODE differentiation:
+        - True NXDOMAIN: Authoritative RCODE 3 (Domain not found)
+        - NODATA: RCODE 0 (Host exists, but no A/AAAA record)
+        - SERVFAIL / REFUSED: Upstream DNS failure (Neutral)
+        - TIMEOUT: Resolution timed out (Neutral)
+        - DNS_UNAVAILABLE: Circuit breaker open or network disabled (Neutral)
         """
         hostname = self._extract_hostname(url)
         if not hostname:
@@ -101,98 +114,162 @@ class DNSFeatureExtractor:
             return self._build_offline_fallback(hostname, "DNS circuit breaker OPEN due to repeated network timeouts.")
 
         t0 = time.perf_counter()
-        original_timeout = socket.getdefaulttimeout()
+        resolved_ips: List[str] = []
+        resolves: Optional[bool] = None
+        dns_status: str = "DNS_UNAVAILABLE"
+        detailed_reason: str = ""
 
-        try:
-            socket.setdefaulttimeout(self.timeout_seconds)
-
-            # 1. Host resolution (A / AAAA records)
+        # Strategy 1: dnspython with explicit RCODE handling
+        if HAS_DNSPYTHON:
             try:
+                resolver = dns.resolver.Resolver()
+                resolver.timeout = self.timeout_seconds
+                resolver.lifetime = self.timeout_seconds * 2.0
+
+                try:
+                    answers = resolver.resolve(hostname, "A")
+                    resolved_ips = [rdata.address for rdata in answers]
+                    resolves = True
+                    dns_status = "SUCCESS"
+                    detailed_reason = f"Resolved to {len(resolved_ips)} IPv4 address(es)."
+                    self.circuit_breaker.record_success()
+                except dns.resolver.NXDOMAIN:
+                    # Authoritative Non-Existent Domain (RCODE 3)
+                    resolves = False
+                    dns_status = "NXDOMAIN"
+                    detailed_reason = "Authoritative DNS response: Host does not exist (NXDOMAIN)."
+                    self.circuit_breaker.record_success()
+                except dns.resolver.NoAnswer:
+                    # RCODE 0 but no A records (NODATA)
+                    resolves = None
+                    dns_status = "NODATA"
+                    detailed_reason = "Host exists but returned no A records (NODATA)."
+                    self.circuit_breaker.record_success()
+                except (dns.resolver.NoNameservers, dns.resolver.NotAbsolute):
+                    # Upstream server failure
+                    resolves = None
+                    dns_status = "SERVFAIL"
+                    detailed_reason = "DNS server returned SERVFAIL or no nameservers available."
+                except (dns.exception.Timeout, dns.resolver.LifetimeTimeout):
+                    # Query timed out
+                    resolves = None
+                    dns_status = "TIMEOUT"
+                    detailed_reason = f"DNS query timed out after {self.timeout_seconds}s."
+                    self.circuit_breaker.record_failure()
+            except Exception as e:
+                resolves = None
+                dns_status = "DNS_UNAVAILABLE"
+                detailed_reason = f"DNS resolver encountered error: {str(e)}"
+                self.circuit_breaker.record_failure()
+        else:
+            # Strategy 2: Socket fallback with error inspection
+            original_timeout = socket.getdefaulttimeout()
+            try:
+                socket.setdefaulttimeout(self.timeout_seconds)
                 addr_info = socket.getaddrinfo(hostname, 80, socket.AF_UNSPEC, socket.SOCK_STREAM)
                 resolved_ips = list(set(ai[4][0] for ai in addr_info))
                 resolves = len(resolved_ips) > 0
-            except (socket.gaierror, socket.timeout):
-                resolved_ips = []
-                resolves = False
+                dns_status = "SUCCESS"
+                detailed_reason = f"Resolved {len(resolved_ips)} IP(s) via standard socket."
+                self.circuit_breaker.record_success()
+            except socket.gaierror as gai_err:
+                err_code = gai_err.errno
+                # 11001 (Windows) / -2 (Linux) = EAI_NONAME / EAI_NODATA
+                if err_code in (getattr(socket, "EAI_NONAME", 11001), getattr(socket, "EAI_NODATA", 11001)):
+                    resolves = False
+                    dns_status = "NXDOMAIN"
+                    detailed_reason = "Host not found (EAI_NONAME / NXDOMAIN)."
+                    self.circuit_breaker.record_success()
+                elif err_code in (getattr(socket, "EAI_AGAIN", 11002),):
+                    resolves = None
+                    dns_status = "TEMPORARY_DNS_FAILURE"
+                    detailed_reason = "Temporary DNS failure (EAI_AGAIN)."
+                else:
+                    resolves = None
+                    dns_status = "DNS_UNAVAILABLE"
+                    detailed_reason = f"Socket gaierror ({err_code}): {str(gai_err)}"
+            except (socket.timeout, TimeoutError):
+                resolves = None
+                dns_status = "TIMEOUT"
+                detailed_reason = "Socket resolution timed out."
+                self.circuit_breaker.record_failure()
+            except Exception as exc:
+                resolves = None
+                dns_status = "DNS_UNAVAILABLE"
+                detailed_reason = f"Socket error: {str(exc)}"
+                self.circuit_breaker.record_failure()
+            finally:
+                socket.setdefaulttimeout(original_timeout)
 
-            # Heuristic simulation for MX / NS indicators using standard socket resolution
-            # In pure stdlib without external dnspython dependency:
-            # We check mailhost subdomain existence (mail.domain, smtp.domain)
-            has_mx_heuristic = False
-            extracted = self.tld_extractor(hostname)
-            root_domain = getattr(extracted, "top_domain_under_public_suffix", None) or hostname
+        elapsed_ms = (time.perf_counter() - t0) * 1000.0
 
-            if resolves:
-                try:
-                    # Quick check for standard mail prefix
-                    socket.getaddrinfo(f"mail.{root_domain}", 25, socket.AF_INET, socket.SOCK_STREAM)
-                    has_mx_heuristic = True
-                except Exception:
-                    has_mx_heuristic = False
+        # Heuristic check for standard mail prefix if domain resolves
+        has_mx_heuristic = False
+        extracted = self.tld_extractor(hostname)
+        root_domain = getattr(extracted, "top_domain_under_public_suffix", None) or hostname
+        if resolves is True:
+            try:
+                socket.getaddrinfo(f"mail.{root_domain}", 25, socket.AF_INET, socket.SOCK_STREAM)
+                has_mx_heuristic = True
+            except Exception:
+                has_mx_heuristic = False
 
-            elapsed_ms = (time.perf_counter() - t0) * 1000.0
-            self.circuit_breaker.record_success()
+        is_fast_flux = len(resolved_ips) >= 3
 
-            # Fast-flux heuristic: >= 3 distinct IPs
-            is_fast_flux = len(resolved_ips) >= 3
+        res = {
+            "hostname": hostname,
+            "resolves": resolves,
+            "ip_count": len(resolved_ips),
+            "resolved_ips": resolved_ips[:5],
+            "has_mx_record": has_mx_heuristic,
+            "is_fast_flux_suspect": is_fast_flux,
+            "dns_risk_score": self._calculate_dns_risk(resolves, len(resolved_ips), has_mx_heuristic, is_fast_flux),
+            "lookup_latency_ms": round(elapsed_ms, 2),
+            "status": dns_status,
+            "reason": detailed_reason
+        }
 
-            res = {
-                "hostname": hostname,
-                "resolves": resolves,
-                "ip_count": len(resolved_ips),
-                "resolved_ips": resolved_ips[:5],  # Cap at 5 for logging
-                "has_mx_record": has_mx_heuristic,
-                "is_fast_flux_suspect": is_fast_flux,
-                "dns_risk_score": self._calculate_dns_risk(resolves, len(resolved_ips), has_mx_heuristic, is_fast_flux),
-                "lookup_latency_ms": round(elapsed_ms, 2),
-                "status": "SUCCESS" if resolves else "NXDOMAIN"
-            }
-
-            self._cache[hostname] = {
-                "data": res,
-                "expires_at": now + self.cache_ttl_seconds
-            }
-            return res
-
-        except Exception as e:
-            self.circuit_breaker.record_failure()
-            elapsed_ms = (time.perf_counter() - t0) * 1000.0
-            return self._build_offline_fallback(hostname, f"DNS resolution failed: {str(e)}", elapsed_ms)
-
-        finally:
-            socket.setdefaulttimeout(original_timeout)
+        self._cache[hostname] = {
+            "data": res,
+            "expires_at": now + self.cache_ttl_seconds
+        }
+        return res
 
     def _calculate_dns_risk(
         self,
-        resolves: bool,
+        resolves: Optional[bool],
         ip_count: int,
         has_mx: bool,
         is_fast_flux: bool
     ) -> float:
         """
         Synthesizes a normalized DNS risk indicator in [0.0, 1.0]:
-        - Unresolvable domain (dead drop or disposable): +0.40
-        - Lack of MX on non-standard root domain: +0.20
-        - Fast-flux suspect: +0.50
+        - Authoritative NXDOMAIN: +0.40
+        - Fast-flux suspect: +0.40
+        - Indeterminate / Timeout / Offline: 0.0 (Strict Neutrality)
         """
+        if resolves is None:
+            # Uncertain / network timeout / offline: Strictly neutral
+            return 0.0
+
         risk = 0.0
-        if not resolves:
-            risk += 0.45
-        if not has_mx:
-            risk += 0.15
+        if resolves is False:
+            risk += 0.40
         if is_fast_flux:
             risk += 0.40
+        if resolves is True and not has_mx:
+            risk += 0.10
         return round(min(1.0, risk), 3)
 
     def _build_empty_response(self, hostname: str, reason: str) -> Dict[str, Any]:
         return {
             "hostname": hostname,
-            "resolves": False,
+            "resolves": None,
             "ip_count": 0,
             "resolved_ips": [],
             "has_mx_record": False,
             "is_fast_flux_suspect": False,
-            "dns_risk_score": 0.5,
+            "dns_risk_score": 0.0,
             "lookup_latency_ms": 0.0,
             "status": "INVALID_HOST",
             "reason": reason
@@ -201,13 +278,13 @@ class DNSFeatureExtractor:
     def _build_offline_fallback(self, hostname: str, reason: str, latency_ms: float = 0.0) -> Dict[str, Any]:
         return {
             "hostname": hostname,
-            "resolves": True,  # Neutral default to prevent false blocking on network partitions
-            "ip_count": 1,
-            "resolved_ips": ["offline.fallback.ip"],
-            "has_mx_record": True,
+            "resolves": None,  # Indeterminate, zero penalty
+            "ip_count": 0,
+            "resolved_ips": [],
+            "has_mx_record": False,
             "is_fast_flux_suspect": False,
             "dns_risk_score": 0.0,
             "lookup_latency_ms": round(latency_ms, 2),
-            "status": "OFFLINE_FALLBACK",
+            "status": "DNS_UNAVAILABLE",
             "reason": reason
         }

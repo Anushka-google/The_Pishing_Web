@@ -2,6 +2,12 @@
 Unit tests for Phase 11: Leakage-Safe Domain-Grouped Evaluation
 """
 
+import sys
+import os
+
+# Add repository root to sys.path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 import pytest
 from src.training.leakage_safe_evaluation import LeakageSafeEvaluator
 

@@ -1,0 +1,385 @@
+{
+  "audit_timestamp": "2026-11-21 12:07:52 UTC",
+  "synthetic_benchmark": {
+    "dataset_label": "Synthetic Template Dataset",
+    "dataset_path": "C:\\Users\\anush\\OneDrive\\Desktop\\Projects\\Startup\\Phishing_web\\data\\processed\\features.csv",
+    "total_samples": 9206,
+    "unique_domains": 4459,
+    "train_samples": 7494,
+    "test_samples": 1712,
+    "train_domains_count": 3567,
+    "test_domains_count": 892,
+    "domain_overlap": 0,
+    "naive_random_results": [
+      {
+        "split_strategy": "Naive Random Split",
+        "model": "Logistic Regression",
+        "accuracy": 0.924,
+        "precision": 0.9219,
+        "recall": 0.9386,
+        "f1_score": 0.9302,
+        "roc_auc": 0.978,
+        "pr_auc": 0.9809,
+        "balanced_accuracy": 0.9227,
+        "specificity": 0.9068,
+        "false_positive_rate": 0.0932,
+        "false_negative_rate": 0.0614,
+        "train_time_sec": 0.1946,
+        "inference_latency_ms": 0.0005,
+        "confusion_matrix": {
+          "tp": 933,
+          "fp": 79,
+          "tn": 769,
+          "fn": 61
+        }
+      },
+      {
+        "split_strategy": "Naive Random Split",
+        "model": "Decision Tree",
+        "accuracy": 0.9967,
+        "precision": 0.997,
+        "recall": 0.997,
+        "f1_score": 0.997,
+        "roc_auc": 0.9977,
+        "pr_auc": 0.9965,
+        "balanced_accuracy": 0.9967,
+        "specificity": 0.9965,
+        "false_positive_rate": 0.0035,
+        "false_negative_rate": 0.003,
+        "train_time_sec": 0.0246,
+        "inference_latency_ms": 0.0009,
+        "confusion_matrix": {
+          "tp": 991,
+          "fp": 3,
+          "tn": 845,
+          "fn": 3
+        }
+      },
+      {
+        "split_strategy": "Naive Random Split",
+        "model": "Random Forest",
+        "accuracy": 0.9989,
+        "precision": 1.0,
+        "recall": 0.998,
+        "f1_score": 0.999,
+        "roc_auc": 1.0,
+        "pr_auc": 1.0,
+        "balanced_accuracy": 0.999,
+        "specificity": 1.0,
+        "false_positive_rate": 0.0,
+        "false_negative_rate": 0.002,
+        "train_time_sec": 0.5018,
+        "inference_latency_ms": 0.2383,
+        "confusion_matrix": {
+          "tp": 992,
+          "fp": 0,
+          "tn": 848,
+          "fn": 2
+        }
+      },
+      {
+        "split_strategy": "Naive Random Split",
+        "model": "XGBoost",
+        "accuracy": 0.9984,
+        "precision": 0.999,
+        "recall": 0.998,
+        "f1_score": 0.9985,
+        "roc_auc": 1.0,
+        "pr_auc": 1.0,
+        "balanced_accuracy": 0.9984,
+        "specificity": 0.9988,
+        "false_positive_rate": 0.0012,
+        "false_negative_rate": 0.002,
+        "train_time_sec": 0.9469,
+        "inference_latency_ms": 0.0059,
+        "confusion_matrix": {
+          "tp": 992,
+          "fp": 1,
+          "tn": 847,
+          "fn": 2
+        }
+      }
+    ],
+    "domain_grouped_results": [
+      {
+        "split_strategy": "Domain-Grouped Split",
+        "model": "Logistic Regression",
+        "accuracy": 0.927,
+        "precision": 0.9124,
+        "recall": 0.9298,
+        "f1_score": 0.921,
+        "roc_auc": 0.9778,
+        "pr_auc": 0.9741,
+        "balanced_accuracy": 0.9272,
+        "specificity": 0.9246,
+        "false_positive_rate": 0.0754,
+        "false_negative_rate": 0.0702,
+        "train_time_sec": 0.0723,
+        "inference_latency_ms": 0.0006,
+        "confusion_matrix": {
+          "tp": 729,
+          "fp": 70,
+          "tn": 858,
+          "fn": 55
+        }
+      },
+      {
+        "split_strategy": "Domain-Grouped Split",
+        "model": "Decision Tree",
+        "accuracy": 0.9988,
+        "precision": 0.9987,
+        "recall": 0.9987,
+        "f1_score": 0.9987,
+        "roc_auc": 0.9988,
+        "pr_auc": 0.998,
+        "balanced_accuracy": 0.9988,
+        "specificity": 0.9989,
+        "false_positive_rate": 0.0011,
+        "false_negative_rate": 0.0013,
+        "train_time_sec": 0.0199,
+        "inference_latency_ms": 0.0005,
+        "confusion_matrix": {
+          "tp": 783,
+          "fp": 1,
+          "tn": 927,
+          "fn": 1
+        }
+      },
+      {
+        "split_strategy": "Domain-Grouped Split",
+        "model": "Random Forest",
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "roc_auc": 1.0,
+        "pr_auc": 1.0,
+        "balanced_accuracy": 1.0,
+        "specificity": 1.0,
+        "false_positive_rate": 0.0,
+        "false_negative_rate": 0.0,
+        "train_time_sec": 0.4593,
+        "inference_latency_ms": 0.0957,
+        "confusion_matrix": {
+          "tp": 784,
+          "fp": 0,
+          "tn": 928,
+          "fn": 0
+        }
+      },
+      {
+        "split_strategy": "Domain-Grouped Split",
+        "model": "XGBoost",
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "roc_auc": 1.0,
+        "pr_auc": 1.0,
+        "balanced_accuracy": 1.0,
+        "specificity": 1.0,
+        "false_positive_rate": 0.0,
+        "false_negative_rate": 0.0,
+        "train_time_sec": 0.4193,
+        "inference_latency_ms": 0.0054,
+        "confusion_matrix": {
+          "tp": 784,
+          "fp": 0,
+          "tn": 928,
+          "fn": 0
+        }
+      }
+    ]
+  },
+  "authentic_benchmark": {
+    "dataset_label": "Authentic Real-World Dataset",
+    "dataset_path": "C:\\Users\\anush\\OneDrive\\Desktop\\Projects\\Startup\\Phishing_web\\data\\real_world\\features_real_world.csv",
+    "total_samples": 20013,
+    "unique_domains": 14889,
+    "train_samples": 15847,
+    "test_samples": 4166,
+    "train_domains_count": 11911,
+    "test_domains_count": 2978,
+    "domain_overlap": 0,
+    "naive_random_results": [
+      {
+        "split_strategy": "Naive Random Split",
+        "model": "Logistic Regression",
+        "accuracy": 0.983,
+        "precision": 0.9954,
+        "recall": 0.9705,
+        "f1_score": 0.9828,
+        "roc_auc": 0.9944,
+        "pr_auc": 0.9935,
+        "balanced_accuracy": 0.983,
+        "specificity": 0.9955,
+        "false_positive_rate": 0.0045,
+        "false_negative_rate": 0.0295,
+        "train_time_sec": 0.0728,
+        "inference_latency_ms": 0.0004,
+        "confusion_matrix": {
+          "tp": 1941,
+          "fp": 9,
+          "tn": 1994,
+          "fn": 59
+        }
+      },
+      {
+        "split_strategy": "Naive Random Split",
+        "model": "Decision Tree",
+        "accuracy": 0.9825,
+        "precision": 0.9949,
+        "recall": 0.97,
+        "f1_score": 0.9823,
+        "roc_auc": 0.9926,
+        "pr_auc": 0.9914,
+        "balanced_accuracy": 0.9825,
+        "specificity": 0.995,
+        "false_positive_rate": 0.005,
+        "false_negative_rate": 0.03,
+        "train_time_sec": 0.0566,
+        "inference_latency_ms": 0.0003,
+        "confusion_matrix": {
+          "tp": 1940,
+          "fp": 10,
+          "tn": 1993,
+          "fn": 60
+        }
+      },
+      {
+        "split_strategy": "Naive Random Split",
+        "model": "Random Forest",
+        "accuracy": 0.9835,
+        "precision": 0.9944,
+        "recall": 0.9725,
+        "f1_score": 0.9833,
+        "roc_auc": 0.9962,
+        "pr_auc": 0.9971,
+        "balanced_accuracy": 0.9835,
+        "specificity": 0.9945,
+        "false_positive_rate": 0.0055,
+        "false_negative_rate": 0.0275,
+        "train_time_sec": 0.6359,
+        "inference_latency_ms": 0.0757,
+        "confusion_matrix": {
+          "tp": 1945,
+          "fp": 11,
+          "tn": 1992,
+          "fn": 55
+        }
+      },
+      {
+        "split_strategy": "Naive Random Split",
+        "model": "XGBoost",
+        "accuracy": 0.984,
+        "precision": 0.9929,
+        "recall": 0.975,
+        "f1_score": 0.9839,
+        "roc_auc": 0.9959,
+        "pr_auc": 0.997,
+        "balanced_accuracy": 0.984,
+        "specificity": 0.993,
+        "false_positive_rate": 0.007,
+        "false_negative_rate": 0.025,
+        "train_time_sec": 0.4678,
+        "inference_latency_ms": 0.0036,
+        "confusion_matrix": {
+          "tp": 1950,
+          "fp": 14,
+          "tn": 1989,
+          "fn": 50
+        }
+      }
+    ],
+    "domain_grouped_results": [
+      {
+        "split_strategy": "Domain-Grouped Split",
+        "model": "Logistic Regression",
+        "accuracy": 0.9784,
+        "precision": 0.9977,
+        "recall": 0.9616,
+        "f1_score": 0.9793,
+        "roc_auc": 0.9918,
+        "pr_auc": 0.9949,
+        "balanced_accuracy": 0.9795,
+        "specificity": 0.9974,
+        "false_positive_rate": 0.0026,
+        "false_negative_rate": 0.0384,
+        "train_time_sec": 0.0564,
+        "inference_latency_ms": 0.0008,
+        "confusion_matrix": {
+          "tp": 2126,
+          "fp": 5,
+          "tn": 1950,
+          "fn": 85
+        }
+      },
+      {
+        "split_strategy": "Domain-Grouped Split",
+        "model": "Decision Tree",
+        "accuracy": 0.9789,
+        "precision": 0.9949,
+        "recall": 0.9652,
+        "f1_score": 0.9798,
+        "roc_auc": 0.9858,
+        "pr_auc": 0.9883,
+        "balanced_accuracy": 0.9798,
+        "specificity": 0.9944,
+        "false_positive_rate": 0.0056,
+        "false_negative_rate": 0.0348,
+        "train_time_sec": 0.0529,
+        "inference_latency_ms": 0.0004,
+        "confusion_matrix": {
+          "tp": 2134,
+          "fp": 11,
+          "tn": 1944,
+          "fn": 77
+        }
+      },
+      {
+        "split_strategy": "Domain-Grouped Split",
+        "model": "Random Forest",
+        "accuracy": 0.9818,
+        "precision": 0.9963,
+        "recall": 0.9692,
+        "f1_score": 0.9826,
+        "roc_auc": 0.9947,
+        "pr_auc": 0.9965,
+        "balanced_accuracy": 0.9826,
+        "specificity": 0.9959,
+        "false_positive_rate": 0.0041,
+        "false_negative_rate": 0.0308,
+        "train_time_sec": 0.9179,
+        "inference_latency_ms": 0.0345,
+        "confusion_matrix": {
+          "tp": 2143,
+          "fp": 8,
+          "tn": 1947,
+          "fn": 68
+        }
+      },
+      {
+        "split_strategy": "Domain-Grouped Split",
+        "model": "XGBoost",
+        "accuracy": 0.982,
+        "precision": 0.9954,
+        "recall": 0.9706,
+        "f1_score": 0.9828,
+        "roc_auc": 0.9941,
+        "pr_auc": 0.9963,
+        "balanced_accuracy": 0.9827,
+        "specificity": 0.9949,
+        "false_positive_rate": 0.0051,
+        "false_negative_rate": 0.0294,
+        "train_time_sec": 0.4247,
+        "inference_latency_ms": 0.0033,
+        "confusion_matrix": {
+          "tp": 2146,
+          "fp": 10,
+          "tn": 1945,
+          "fn": 65
+        }
+      }
+    ]
+  }
+}
