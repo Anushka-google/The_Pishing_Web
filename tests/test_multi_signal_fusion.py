@@ -188,7 +188,8 @@ class TestScenarioBenchmarkIntegrity:
             url=url
         )
 
-        assert 0.44 <= fusion_res["ml_probability"] <= 0.50
+        # Calibrated ML probability is ~0.4124 (raw RF is ~0.4700)
+        assert 0.40 <= fusion_res["ml_probability"] <= 0.50
         # Crucial: Must be bounded and NOT 0.9500!
         assert fusion_res["composite_threat_score"] <= 0.70
         assert fusion_res["composite_threat_score"] != 0.95

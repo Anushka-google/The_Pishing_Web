@@ -1,5 +1,5 @@
 {
-  "all_passed": true,
+  "all_passed": false,
   "checks": [
     {
       "name": "Check 1: No Label Leakage",
@@ -68,16 +68,16 @@
     },
     {
       "name": "Check 8: Independent Real-World Holdout",
-      "passed": true,
+      "passed": false,
       "external_dataset_source": "URLhaus (abuse.ch live feeds) + Tranco Top-1M",
-      "external_holdout_samples": 9816,
-      "holdout_accuracy": 0.9311,
-      "holdout_precision": 1.0,
-      "holdout_recall": 0.8616,
-      "holdout_f1_score": 0.9257,
-      "holdout_roc_auc": 0.9865,
-      "scientific_disclosure": "Tested on 9,816 live external internet URLs. Precision is 100.00% (0 False Positives on real benign domains), Recall is 86.16% (vs. ~99.9% on synthetic data). The ~14% recall drop empirically reflects real-world threat variance beyond synthetic templates."
+      "external_holdout_samples": 19722,
+      "holdout_accuracy": 0.7372,
+      "holdout_precision": 0.9998,
+      "holdout_recall": 0.4707,
+      "holdout_f1_score": 0.6401,
+      "holdout_roc_auc": 0.9104,
+      "scientific_disclosure": "Tested on 19,722 live external internet URLs. Precision is 99.98% (0 False Positives on real benign domains), Recall is 47.07% (vs. ~99.9% on synthetic data). The ~14% recall drop empirically reflects real-world threat variance beyond synthetic templates."
     }
   ],
-  "verdict": "DOMAIN-DISJOINT & REAL-WORLD VALIDATED (SYNTHETIC TEMPLATE BIAS DISCLOSED)"
+  "verdict": "ATTENTION NEEDED"
 }

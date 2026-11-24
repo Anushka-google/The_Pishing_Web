@@ -1,0 +1,604 @@
+{
+  "total_urls_tested": 10,
+  "max_additivity_error": 4.440892098500626e-16,
+  "mean_additivity_error": 1.8596235662471373e-16,
+  "tolerance_threshold": 1e-06,
+  "additivity_check": "PASS",
+  "results": [
+    {
+      "category": "Legitimate URL",
+      "url": "https://www.google.com",
+      "raw_rf_output": 0.0,
+      "explained_class": "Phishing (Class 1)",
+      "shap_baseline_expected_value": 0.540182,
+      "sum_of_shap_values": -0.540182,
+      "reconstructed_output": 0.0,
+      "additivity_error": 1.1102230246251565e-16,
+      "top_5_positive": [
+        {
+          "feature": "url_length",
+          "observed_value": 23.0,
+          "shap_value": 0.005241
+        },
+        {
+          "feature": "number_of_special_characters",
+          "observed_value": 0.0,
+          "shap_value": 0.000729
+        }
+      ],
+      "top_5_negative": [
+        {
+          "feature": "number_of_digits",
+          "observed_value": 0.0,
+          "shap_value": -0.202242
+        },
+        {
+          "feature": "number_of_subdomains",
+          "observed_value": 1.0,
+          "shap_value": -0.055606
+        },
+        {
+          "feature": "query_length",
+          "observed_value": 0.0,
+          "shap_value": -0.044087
+        },
+        {
+          "feature": "domain_length",
+          "observed_value": 14.0,
+          "shap_value": -0.037358
+        },
+        {
+          "feature": "url_entropy",
+          "observed_value": 3.6425,
+          "shap_value": -0.035706
+        }
+      ]
+    },
+    {
+      "category": "Suspicious URL",
+      "url": "http://update-secure-bank-login.xyz/auth",
+      "raw_rf_output": 0.19,
+      "explained_class": "Phishing (Class 1)",
+      "shap_baseline_expected_value": 0.540182,
+      "sum_of_shap_values": -0.350182,
+      "reconstructed_output": 0.19,
+      "additivity_error": 1.6653345369377348e-16,
+      "top_5_positive": [
+        {
+          "feature": "suspicious_keyword_count",
+          "observed_value": 4.0,
+          "shap_value": 0.065253
+        },
+        {
+          "feature": "domain_entropy",
+          "observed_value": 4.2534,
+          "shap_value": 0.026651
+        },
+        {
+          "feature": "path_length",
+          "observed_value": 5.0,
+          "shap_value": 0.014523
+        },
+        {
+          "feature": "number_of_special_characters",
+          "observed_value": 0.0,
+          "shap_value": 0.000939
+        },
+        {
+          "feature": "number_of_subdomains",
+          "observed_value": 0.0,
+          "shap_value": 0.000599
+        }
+      ],
+      "top_5_negative": [
+        {
+          "feature": "number_of_digits",
+          "observed_value": 0.0,
+          "shap_value": -0.182756
+        },
+        {
+          "feature": "domain_length",
+          "observed_value": 28.0,
+          "shap_value": -0.08324
+        },
+        {
+          "feature": "query_length",
+          "observed_value": 0.0,
+          "shap_value": -0.043353
+        },
+        {
+          "feature": "uses_https",
+          "observed_value": 0.0,
+          "shap_value": -0.031523
+        },
+        {
+          "feature": "number_of_dots",
+          "observed_value": 1.0,
+          "shap_value": -0.020726
+        }
+      ]
+    },
+    {
+      "category": "Multiple Subdomains",
+      "url": "https://mail.secure.banking.portal.legit-firm.co.uk/inbox",
+      "raw_rf_output": 0.51,
+      "explained_class": "Phishing (Class 1)",
+      "shap_baseline_expected_value": 0.540182,
+      "sum_of_shap_values": -0.030182,
+      "reconstructed_output": 0.51,
+      "additivity_error": 4.440892098500626e-16,
+      "top_5_positive": [
+        {
+          "feature": "domain_length",
+          "observed_value": 43.0,
+          "shap_value": 0.184073
+        },
+        {
+          "feature": "number_of_subdomains",
+          "observed_value": 4.0,
+          "shap_value": 0.065444
+        },
+        {
+          "feature": "number_of_dots",
+          "observed_value": 6.0,
+          "shap_value": 0.034725
+        },
+        {
+          "feature": "domain_entropy",
+          "observed_value": 4.0651,
+          "shap_value": 0.027665
+        },
+        {
+          "feature": "number_of_special_characters",
+          "observed_value": 0.0,
+          "shap_value": 0.000711
+        }
+      ],
+      "top_5_negative": [
+        {
+          "feature": "number_of_digits",
+          "observed_value": 0.0,
+          "shap_value": -0.155944
+        },
+        {
+          "feature": "query_length",
+          "observed_value": 0.0,
+          "shap_value": -0.047416
+        },
+        {
+          "feature": "url_entropy",
+          "observed_value": 4.3521,
+          "shap_value": -0.025197
+        },
+        {
+          "feature": "has_query",
+          "observed_value": 0.0,
+          "shap_value": -0.020269
+        },
+        {
+          "feature": "number_of_question_marks",
+          "observed_value": 0.0,
+          "shap_value": -0.018041
+        }
+      ]
+    },
+    {
+      "category": "Raw IP Address Host",
+      "url": "http://176.77.46.141:8080/bin.sh",
+      "raw_rf_output": 0.667059,
+      "explained_class": "Phishing (Class 1)",
+      "shap_baseline_expected_value": 0.540182,
+      "sum_of_shap_values": 0.126877,
+      "reconstructed_output": 0.667059,
+      "additivity_error": 0.0,
+      "top_5_positive": [
+        {
+          "feature": "number_of_digits",
+          "observed_value": 14.0,
+          "shap_value": 0.083256
+        },
+        {
+          "feature": "has_ip_address",
+          "observed_value": 1.0,
+          "shap_value": 0.079717
+        },
+        {
+          "feature": "number_of_dots",
+          "observed_value": 4.0,
+          "shap_value": 0.065848
+        },
+        {
+          "feature": "number_of_subdomains",
+          "observed_value": 0.0,
+          "shap_value": 0.031174
+        },
+        {
+          "feature": "path_length",
+          "observed_value": 7.0,
+          "shap_value": 0.022792
+        }
+      ],
+      "top_5_negative": [
+        {
+          "feature": "query_length",
+          "observed_value": 0.0,
+          "shap_value": -0.063028
+        },
+        {
+          "feature": "number_of_slashes",
+          "observed_value": 3.0,
+          "shap_value": -0.037745
+        },
+        {
+          "feature": "url_entropy",
+          "observed_value": 3.8667,
+          "shap_value": -0.022938
+        },
+        {
+          "feature": "has_query",
+          "observed_value": 0.0,
+          "shap_value": -0.022216
+        },
+        {
+          "feature": "uses_https",
+          "observed_value": 0.0,
+          "shap_value": -0.01629
+        }
+      ]
+    },
+    {
+      "category": "Suspicious Keywords",
+      "url": "https://login.paypal.com.verify-billing-update.cc/account",
+      "raw_rf_output": 0.55,
+      "explained_class": "Phishing (Class 1)",
+      "shap_baseline_expected_value": 0.540182,
+      "sum_of_shap_values": 0.009818,
+      "reconstructed_output": 0.55,
+      "additivity_error": 4.440892098500626e-16,
+      "top_5_positive": [
+        {
+          "feature": "domain_length",
+          "observed_value": 41.0,
+          "shap_value": 0.169849
+        },
+        {
+          "feature": "number_of_subdomains",
+          "observed_value": 3.0,
+          "shap_value": 0.054609
+        },
+        {
+          "feature": "suspicious_keyword_count",
+          "observed_value": 5.0,
+          "shap_value": 0.040574
+        },
+        {
+          "feature": "number_of_dots",
+          "observed_value": 4.0,
+          "shap_value": 0.028777
+        },
+        {
+          "feature": "brand_in_subdomain",
+          "observed_value": 1.0,
+          "shap_value": 0.021488
+        }
+      ],
+      "top_5_negative": [
+        {
+          "feature": "number_of_digits",
+          "observed_value": 0.0,
+          "shap_value": -0.165761
+        },
+        {
+          "feature": "query_length",
+          "observed_value": 0.0,
+          "shap_value": -0.052176
+        },
+        {
+          "feature": "has_query",
+          "observed_value": 0.0,
+          "shap_value": -0.024199
+        },
+        {
+          "feature": "number_of_question_marks",
+          "observed_value": 0.0,
+          "shap_value": -0.021649
+        },
+        {
+          "feature": "number_of_equals",
+          "observed_value": 0.0,
+          "shap_value": -0.020891
+        }
+      ]
+    },
+    {
+      "category": "Long Query String",
+      "url": "https://portal.service.com/checkout?session_id=98734982347293847293847293847293847293847&token=x9aB82Lmn91ZpQ49382",
+      "raw_rf_output": 0.05,
+      "explained_class": "Phishing (Class 1)",
+      "shap_baseline_expected_value": 0.540182,
+      "sum_of_shap_values": -0.490182,
+      "reconstructed_output": 0.05,
+      "additivity_error": 2.0816681711721685e-16,
+      "top_5_positive": [
+        {
+          "feature": "path_length",
+          "observed_value": 9.0,
+          "shap_value": 0.01833
+        },
+        {
+          "feature": "number_of_digits",
+          "observed_value": 51.0,
+          "shap_value": 0.017971
+        },
+        {
+          "feature": "url_entropy",
+          "observed_value": 4.7201,
+          "shap_value": 0.011517
+        }
+      ],
+      "top_5_negative": [
+        {
+          "feature": "query_length",
+          "observed_value": 78.0,
+          "shap_value": -0.171973
+        },
+        {
+          "feature": "number_of_equals",
+          "observed_value": 2.0,
+          "shap_value": -0.079249
+        },
+        {
+          "feature": "domain_length",
+          "observed_value": 18.0,
+          "shap_value": -0.075258
+        },
+        {
+          "feature": "number_of_subdomains",
+          "observed_value": 1.0,
+          "shap_value": -0.039965
+        },
+        {
+          "feature": "url_length",
+          "observed_value": 114.0,
+          "shap_value": -0.030343
+        }
+      ]
+    },
+    {
+      "category": "HTTPS Benign Authority",
+      "url": "https://en.wikipedia.org/wiki/Phishing",
+      "raw_rf_output": 0.0,
+      "explained_class": "Phishing (Class 1)",
+      "shap_baseline_expected_value": 0.540182,
+      "sum_of_shap_values": -0.540182,
+      "reconstructed_output": 0.0,
+      "additivity_error": 1.1102230246251565e-16,
+      "top_5_positive": [
+        {
+          "feature": "path_length",
+          "observed_value": 14.0,
+          "shap_value": 0.026107
+        },
+        {
+          "feature": "url_length",
+          "observed_value": 38.0,
+          "shap_value": 0.010814
+        },
+        {
+          "feature": "number_of_slashes",
+          "observed_value": 4.0,
+          "shap_value": 0.00382
+        },
+        {
+          "feature": "number_of_equals",
+          "observed_value": 0.0,
+          "shap_value": 0.001955
+        },
+        {
+          "feature": "number_of_special_characters",
+          "observed_value": 0.0,
+          "shap_value": 0.000883
+        }
+      ],
+      "top_5_negative": [
+        {
+          "feature": "number_of_digits",
+          "observed_value": 0.0,
+          "shap_value": -0.259386
+        },
+        {
+          "feature": "number_of_subdomains",
+          "observed_value": 1.0,
+          "shap_value": -0.079798
+        },
+        {
+          "feature": "number_of_dots",
+          "observed_value": 2.0,
+          "shap_value": -0.051424
+        },
+        {
+          "feature": "query_length",
+          "observed_value": 0.0,
+          "shap_value": -0.039213
+        },
+        {
+          "feature": "domain_length",
+          "observed_value": 16.0,
+          "shap_value": -0.037782
+        }
+      ]
+    },
+    {
+      "category": "@ Credential Delimiter",
+      "url": "http://google.com@evil-malware-server.com/payload.exe",
+      "raw_rf_output": 0.11,
+      "explained_class": "Phishing (Class 1)",
+      "shap_baseline_expected_value": 0.540182,
+      "sum_of_shap_values": -0.430182,
+      "reconstructed_output": 0.11,
+      "additivity_error": 9.71445146547012e-17,
+      "top_5_positive": [
+        {
+          "feature": "number_of_dots",
+          "observed_value": 3.0,
+          "shap_value": 0.044893
+        },
+        {
+          "feature": "path_length",
+          "observed_value": 12.0,
+          "shap_value": 0.039825
+        },
+        {
+          "feature": "number_of_subdomains",
+          "observed_value": 0.0,
+          "shap_value": 0.003527
+        }
+      ],
+      "top_5_negative": [
+        {
+          "feature": "number_of_digits",
+          "observed_value": 0.0,
+          "shap_value": -0.160272
+        },
+        {
+          "feature": "domain_length",
+          "observed_value": 23.0,
+          "shap_value": -0.095573
+        },
+        {
+          "feature": "query_length",
+          "observed_value": 0.0,
+          "shap_value": -0.056812
+        },
+        {
+          "feature": "domain_entropy",
+          "observed_value": 3.5342,
+          "shap_value": -0.02631
+        },
+        {
+          "feature": "url_entropy",
+          "observed_value": 4.2509,
+          "shap_value": -0.025862
+        }
+      ]
+    },
+    {
+      "category": "Long Domain Evasion",
+      "url": "https://this-is-an-extremely-long-domain-name-registered-specifically-for-phishing-and-evasion.net/login",
+      "raw_rf_output": 0.4,
+      "explained_class": "Phishing (Class 1)",
+      "shap_baseline_expected_value": 0.540182,
+      "sum_of_shap_values": -0.140182,
+      "reconstructed_output": 0.4,
+      "additivity_error": 2.220446049250313e-16,
+      "top_5_positive": [
+        {
+          "feature": "domain_length",
+          "observed_value": 90.0,
+          "shap_value": 0.175074
+        },
+        {
+          "feature": "domain_entropy",
+          "observed_value": 4.0607,
+          "shap_value": 0.040339
+        },
+        {
+          "feature": "number_of_special_characters",
+          "observed_value": 0.0,
+          "shap_value": 0.000892
+        }
+      ],
+      "top_5_negative": [
+        {
+          "feature": "number_of_digits",
+          "observed_value": 0.0,
+          "shap_value": -0.158155
+        },
+        {
+          "feature": "query_length",
+          "observed_value": 0.0,
+          "shap_value": -0.046079
+        },
+        {
+          "feature": "url_entropy",
+          "observed_value": 4.1918,
+          "shap_value": -0.036307
+        },
+        {
+          "feature": "url_length",
+          "observed_value": 104.0,
+          "shap_value": -0.021268
+        },
+        {
+          "feature": "number_of_dots",
+          "observed_value": 1.0,
+          "shap_value": -0.019946
+        }
+      ]
+    },
+    {
+      "category": "Unusual Structural Pattern",
+      "url": "http://10.0.0.1:8443/cgi-bin/;test?x=1#section/deep/path/./../file",
+      "raw_rf_output": 0.49,
+      "explained_class": "Phishing (Class 1)",
+      "shap_baseline_expected_value": 0.540182,
+      "sum_of_shap_values": -0.050182,
+      "reconstructed_output": 0.49,
+      "additivity_error": 5.551115123125783e-17,
+      "top_5_positive": [
+        {
+          "feature": "number_of_dots",
+          "observed_value": 6.0,
+          "shap_value": 0.082407
+        },
+        {
+          "feature": "has_ip_address",
+          "observed_value": 1.0,
+          "shap_value": 0.08184
+        },
+        {
+          "feature": "path_length",
+          "observed_value": 9.0,
+          "shap_value": 0.033379
+        },
+        {
+          "feature": "number_of_subdomains",
+          "observed_value": 0.0,
+          "shap_value": 0.010557
+        },
+        {
+          "feature": "number_of_equals",
+          "observed_value": 1.0,
+          "shap_value": 0.005551
+        }
+      ],
+      "top_5_negative": [
+        {
+          "feature": "query_length",
+          "observed_value": 3.0,
+          "shap_value": -0.085988
+        },
+        {
+          "feature": "url_length",
+          "observed_value": 61.0,
+          "shap_value": -0.052749
+        },
+        {
+          "feature": "number_of_hyphens",
+          "observed_value": 1.0,
+          "shap_value": -0.026818
+        },
+        {
+          "feature": "suspicious_keyword_count",
+          "observed_value": 0.0,
+          "shap_value": -0.020695
+        },
+        {
+          "feature": "number_of_slashes",
+          "observed_value": 9.0,
+          "shap_value": -0.01811
+        }
+      ]
+    }
+  ]
+}

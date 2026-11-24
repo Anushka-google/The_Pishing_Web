@@ -1,0 +1,446 @@
+{
+  "metadata": {
+    "method": "Sigmoid Platt Scaling",
+    "calibration_samples": 1794,
+    "calibration_domains": 1092,
+    "test_samples": 1847,
+    "test_domains": 1092,
+    "zero_domain_leakage": true
+  },
+  "domain_disjoint_test_evaluation": {
+    "dataset_name": "Domain-Disjoint Test Set (features.csv)",
+    "sample_count": 1847,
+    "raw_metrics": {
+      "brier_score": 0.00042,
+      "log_loss": 0.00431,
+      "ece": 0.004,
+      "roc_auc": 1.0,
+      "pr_auc": 1.0,
+      "reliability_bins": [
+        {
+          "bin_index": 1,
+          "range": "[0.00, 0.10]",
+          "count": 834,
+          "accuracy": 0.0,
+          "confidence": 0.0036,
+          "gap": 0.0036
+        },
+        {
+          "bin_index": 2,
+          "range": "[0.10, 0.20]",
+          "count": 3,
+          "accuracy": 0.0,
+          "confidence": 0.1397,
+          "gap": 0.1397
+        },
+        {
+          "bin_index": 3,
+          "range": "[0.20, 0.30]",
+          "count": 1,
+          "accuracy": 0.0,
+          "confidence": 0.2825,
+          "gap": 0.2825
+        },
+        {
+          "bin_index": 4,
+          "range": "[0.30, 0.40]",
+          "count": 1,
+          "accuracy": 1.0,
+          "confidence": 0.3802,
+          "gap": 0.6198
+        },
+        {
+          "bin_index": 5,
+          "range": "[0.40, 0.50]",
+          "count": 0,
+          "accuracy": 0.0,
+          "confidence": 0.45,
+          "gap": 0.0
+        },
+        {
+          "bin_index": 6,
+          "range": "[0.50, 0.60]",
+          "count": 0,
+          "accuracy": 0.0,
+          "confidence": 0.55,
+          "gap": 0.0
+        },
+        {
+          "bin_index": 7,
+          "range": "[0.60, 0.70]",
+          "count": 0,
+          "accuracy": 0.0,
+          "confidence": 0.65,
+          "gap": 0.0
+        },
+        {
+          "bin_index": 8,
+          "range": "[0.70, 0.80]",
+          "count": 0,
+          "accuracy": 0.0,
+          "confidence": 0.75,
+          "gap": 0.0
+        },
+        {
+          "bin_index": 9,
+          "range": "[0.80, 0.90]",
+          "count": 2,
+          "accuracy": 1.0,
+          "confidence": 0.8143,
+          "gap": 0.1857
+        },
+        {
+          "bin_index": 10,
+          "range": "[0.90, 1.00]",
+          "count": 1006,
+          "accuracy": 1.0,
+          "confidence": 0.9973,
+          "gap": 0.0027
+        }
+      ]
+    },
+    "calibrated_metrics": {
+      "brier_score": 0.00038,
+      "log_loss": 0.00209,
+      "ece": 0.00158,
+      "roc_auc": 1.0,
+      "pr_auc": 1.0,
+      "reliability_bins": [
+        {
+          "bin_index": 1,
+          "range": "[0.00, 0.10]",
+          "count": 838,
+          "accuracy": 0.0,
+          "confidence": 0.0012,
+          "gap": 0.0012
+        },
+        {
+          "bin_index": 2,
+          "range": "[0.10, 0.20]",
+          "count": 1,
+          "accuracy": 1.0,
+          "confidence": 0.1694,
+          "gap": 0.8306
+        },
+        {
+          "bin_index": 3,
+          "range": "[0.20, 0.30]",
+          "count": 0,
+          "accuracy": 0.0,
+          "confidence": 0.25,
+          "gap": 0.0
+        },
+        {
+          "bin_index": 4,
+          "range": "[0.30, 0.40]",
+          "count": 0,
+          "accuracy": 0.0,
+          "confidence": 0.35,
+          "gap": 0.0
+        },
+        {
+          "bin_index": 5,
+          "range": "[0.40, 0.50]",
+          "count": 0,
+          "accuracy": 0.0,
+          "confidence": 0.45,
+          "gap": 0.0
+        },
+        {
+          "bin_index": 6,
+          "range": "[0.50, 0.60]",
+          "count": 0,
+          "accuracy": 0.0,
+          "confidence": 0.55,
+          "gap": 0.0
+        },
+        {
+          "bin_index": 7,
+          "range": "[0.60, 0.70]",
+          "count": 0,
+          "accuracy": 0.0,
+          "confidence": 0.65,
+          "gap": 0.0
+        },
+        {
+          "bin_index": 8,
+          "range": "[0.70, 0.80]",
+          "count": 0,
+          "accuracy": 0.0,
+          "confidence": 0.75,
+          "gap": 0.0
+        },
+        {
+          "bin_index": 9,
+          "range": "[0.80, 0.90]",
+          "count": 0,
+          "accuracy": 0.0,
+          "confidence": 0.85,
+          "gap": 0.0
+        },
+        {
+          "bin_index": 10,
+          "range": "[0.90, 1.00]",
+          "count": 1008,
+          "accuracy": 1.0,
+          "confidence": 0.999,
+          "gap": 0.001
+        }
+      ]
+    },
+    "improvements": {
+      "brier_score_delta": 4e-05,
+      "log_loss_delta": 0.00222,
+      "ece_delta": 0.00242
+    }
+  },
+  "domain_disjoint_directives": {
+    "threshold_0_50_standard": {
+      "tp": 1008,
+      "fp": 0,
+      "tn": 838,
+      "fn": 1,
+      "precision": 1.0,
+      "recall": 0.999,
+      "fpr": 0.0,
+      "fnr": 0.001
+    },
+    "block_policy_threshold_0_65": {
+      "description": "BLOCK (probability >= 0.65): Zero-tolerance automated blocking",
+      "tp": 1008,
+      "fp": 0,
+      "tn": 838,
+      "fn": 1,
+      "precision": 1.0,
+      "recall": 0.999,
+      "fpr": 0.0,
+      "fnr": 0.001
+    },
+    "caution_tier": {
+      "description": "CAUTION (0.40 <= probability < 0.65): Quarantined for SOC inspection",
+      "count": 0
+    },
+    "allow_tier": {
+      "description": "ALLOW (probability < 0.40): Permitted web browsing",
+      "count": 839
+    }
+  },
+  "real_world_evaluation": {
+    "dataset_name": "Real-World Untouched Holdout (URLhaus + Tranco)",
+    "sample_count": 20013,
+    "raw_metrics": {
+      "brier_score": 0.2374,
+      "log_loss": 2.83348,
+      "ece": 0.31634,
+      "roc_auc": 0.9094,
+      "pr_auc": 0.9207,
+      "reliability_bins": [
+        {
+          "bin_index": 1,
+          "range": "[0.00, 0.10]",
+          "count": 12953,
+          "accuracy": 0.232,
+          "confidence": 0.0078,
+          "gap": 0.2242
+        },
+        {
+          "bin_index": 2,
+          "range": "[0.10, 0.20]",
+          "count": 624,
+          "accuracy": 0.9615,
+          "confidence": 0.1429,
+          "gap": 0.8187
+        },
+        {
+          "bin_index": 3,
+          "range": "[0.20, 0.30]",
+          "count": 257,
+          "accuracy": 0.93,
+          "confidence": 0.2497,
+          "gap": 0.6803
+        },
+        {
+          "bin_index": 4,
+          "range": "[0.30, 0.40]",
+          "count": 651,
+          "accuracy": 0.9739,
+          "confidence": 0.3533,
+          "gap": 0.6206
+        },
+        {
+          "bin_index": 5,
+          "range": "[0.40, 0.50]",
+          "count": 877,
+          "accuracy": 0.992,
+          "confidence": 0.4519,
+          "gap": 0.5402
+        },
+        {
+          "bin_index": 6,
+          "range": "[0.50, 0.60]",
+          "count": 2650,
+          "accuracy": 0.9996,
+          "confidence": 0.5496,
+          "gap": 0.45
+        },
+        {
+          "bin_index": 7,
+          "range": "[0.60, 0.70]",
+          "count": 1971,
+          "accuracy": 1.0,
+          "confidence": 0.6639,
+          "gap": 0.3361
+        },
+        {
+          "bin_index": 8,
+          "range": "[0.70, 0.80]",
+          "count": 28,
+          "accuracy": 1.0,
+          "confidence": 0.7151,
+          "gap": 0.2849
+        },
+        {
+          "bin_index": 9,
+          "range": "[0.80, 0.90]",
+          "count": 1,
+          "accuracy": 1.0,
+          "confidence": 0.86,
+          "gap": 0.14
+        },
+        {
+          "bin_index": 10,
+          "range": "[0.90, 1.00]",
+          "count": 1,
+          "accuracy": 1.0,
+          "confidence": 0.907,
+          "gap": 0.093
+        }
+      ]
+    },
+    "calibrated_metrics": {
+      "brier_score": 0.24784,
+      "log_loss": 1.3414,
+      "ece": 0.29791,
+      "roc_auc": 0.9094,
+      "pr_auc": 0.9207,
+      "reliability_bins": [
+        {
+          "bin_index": 1,
+          "range": "[0.00, 0.10]",
+          "count": 14028,
+          "accuracy": 0.287,
+          "confidence": 0.0033,
+          "gap": 0.2837
+        },
+        {
+          "bin_index": 2,
+          "range": "[0.10, 0.20]",
+          "count": 455,
+          "accuracy": 0.989,
+          "confidence": 0.1491,
+          "gap": 0.8399
+        },
+        {
+          "bin_index": 3,
+          "range": "[0.20, 0.30]",
+          "count": 266,
+          "accuracy": 0.9887,
+          "confidence": 0.246,
+          "gap": 0.7428
+        },
+        {
+          "bin_index": 4,
+          "range": "[0.30, 0.40]",
+          "count": 259,
+          "accuracy": 0.9923,
+          "confidence": 0.3488,
+          "gap": 0.6435
+        },
+        {
+          "bin_index": 5,
+          "range": "[0.40, 0.50]",
+          "count": 317,
+          "accuracy": 0.9968,
+          "confidence": 0.4436,
+          "gap": 0.5532
+        },
+        {
+          "bin_index": 6,
+          "range": "[0.50, 0.60]",
+          "count": 343,
+          "accuracy": 0.9971,
+          "confidence": 0.5528,
+          "gap": 0.4443
+        },
+        {
+          "bin_index": 7,
+          "range": "[0.60, 0.70]",
+          "count": 1461,
+          "accuracy": 1.0,
+          "confidence": 0.6713,
+          "gap": 0.3287
+        },
+        {
+          "bin_index": 8,
+          "range": "[0.70, 0.80]",
+          "count": 831,
+          "accuracy": 0.9988,
+          "confidence": 0.7169,
+          "gap": 0.2819
+        },
+        {
+          "bin_index": 9,
+          "range": "[0.80, 0.90]",
+          "count": 514,
+          "accuracy": 1.0,
+          "confidence": 0.8598,
+          "gap": 0.1402
+        },
+        {
+          "bin_index": 10,
+          "range": "[0.90, 1.00]",
+          "count": 1539,
+          "accuracy": 1.0,
+          "confidence": 0.9208,
+          "gap": 0.0792
+        }
+      ]
+    },
+    "improvements": {
+      "brier_score_delta": -0.01044,
+      "log_loss_delta": 1.49208,
+      "ece_delta": 0.01843
+    }
+  },
+  "real_world_directives": {
+    "threshold_0_50_standard": {
+      "tp": 4686,
+      "fp": 2,
+      "tn": 10013,
+      "fn": 5312,
+      "precision": 0.9996,
+      "recall": 0.4687,
+      "fpr": 0.0002,
+      "fnr": 0.5313
+    },
+    "block_policy_threshold_0_65": {
+      "description": "BLOCK (probability >= 0.65): Zero-tolerance automated blocking",
+      "tp": 4094,
+      "fp": 1,
+      "tn": 10014,
+      "fn": 5904,
+      "precision": 0.9998,
+      "recall": 0.4095,
+      "fpr": 0.0001,
+      "fnr": 0.5905
+    },
+    "caution_tier": {
+      "description": "CAUTION (0.40 <= probability < 0.65): Quarantined for SOC inspection",
+      "count": 910
+    },
+    "allow_tier": {
+      "description": "ALLOW (probability < 0.40): Permitted web browsing",
+      "count": 15008
+    }
+  }
+}

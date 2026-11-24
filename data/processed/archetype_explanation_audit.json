@@ -1,0 +1,535 @@
+[
+  {
+    "archetype": "1. Established legitimate",
+    "url": "https://www.wikipedia.org/wiki/Machine_learning",
+    "raw_rf_probability": 0.0,
+    "calibrated_probability": 0.0011,
+    "directive": "ALLOW",
+    "risk_level": "LOW",
+    "additive_residual": 0.0,
+    "is_additively_consistent": true,
+    "top_risk_contributors": [
+      {
+        "feature": "number_of_slashes",
+        "value": 4.0,
+        "shap_impact": 0.0023,
+        "direction": "RISK_INCREASING"
+      },
+      {
+        "feature": "number_of_hyphens",
+        "value": 0.0,
+        "shap_impact": 0.0009,
+        "direction": "RISK_INCREASING"
+      }
+    ],
+    "top_mitigating_factors": [
+      {
+        "feature": "number_of_digits",
+        "value": 0.0,
+        "shap_impact": -0.1324,
+        "direction": "RISK_DECREASING"
+      },
+      {
+        "feature": "domain_length",
+        "value": 17.0,
+        "shap_impact": -0.0761,
+        "direction": "RISK_DECREASING"
+      }
+    ],
+    "narrative_signals": [
+      "Number of slashes (+0.002)",
+      "Number of hyphens (+0.001)"
+    ],
+    "narrative_mitigators": [
+      "Number of digits (-0.132)",
+      "Domain length (-0.076)"
+    ],
+    "recommendation": "URL conforms to expected benign web standards."
+  },
+  {
+    "archetype": "2. Suspicious-looking URL",
+    "url": "https://secure.appleid-support-21.club/portal/login?auth=9183",
+    "raw_rf_probability": 0.6991,
+    "calibrated_probability": 0.9426,
+    "directive": "BLOCK",
+    "risk_level": "HIGH",
+    "additive_residual": 0.0,
+    "is_additively_consistent": true,
+    "top_risk_contributors": [
+      {
+        "feature": "domain_length",
+        "value": 30.0,
+        "shap_impact": 0.1426,
+        "direction": "RISK_INCREASING"
+      },
+      {
+        "feature": "suspicious_keyword_count",
+        "value": 2.0,
+        "shap_impact": 0.0706,
+        "direction": "RISK_INCREASING"
+      },
+      {
+        "feature": "number_of_digits",
+        "value": 6.0,
+        "shap_impact": 0.0638,
+        "direction": "RISK_INCREASING"
+      }
+    ],
+    "top_mitigating_factors": [
+      {
+        "feature": "query_length",
+        "value": 9.0,
+        "shap_impact": -0.1404,
+        "direction": "RISK_DECREASING"
+      },
+      {
+        "feature": "number_of_subdomains",
+        "value": 1.0,
+        "shap_impact": -0.0332,
+        "direction": "RISK_DECREASING"
+      }
+    ],
+    "narrative_signals": [
+      "Domain length (+0.143)",
+      "Suspicious keyword count (+0.071)",
+      "Number of digits (+0.064)"
+    ],
+    "narrative_mitigators": [
+      "Query length (-0.140)",
+      "Number of subdomains (-0.033)"
+    ],
+    "recommendation": "Do not submit sensitive credentials or download files from this origin until verified."
+  },
+  {
+    "archetype": "3. Brand impersonation",
+    "url": "https://auth.chase.com.cloud-node-147.cc/session/update",
+    "raw_rf_probability": 0.67,
+    "calibrated_probability": 0.9167,
+    "directive": "BLOCK",
+    "risk_level": "HIGH",
+    "additive_residual": 0.0,
+    "is_additively_consistent": true,
+    "top_risk_contributors": [
+      {
+        "feature": "domain_length",
+        "value": 32.0,
+        "shap_impact": 0.1698,
+        "direction": "RISK_INCREASING"
+      },
+      {
+        "feature": "number_of_subdomains",
+        "value": 3.0,
+        "shap_impact": 0.0619,
+        "direction": "RISK_INCREASING"
+      },
+      {
+        "feature": "suspicious_keyword_count",
+        "value": 2.0,
+        "shap_impact": 0.0426,
+        "direction": "RISK_INCREASING"
+      }
+    ],
+    "top_mitigating_factors": [
+      {
+        "feature": "query_length",
+        "value": 0.0,
+        "shap_impact": -0.0595,
+        "direction": "RISK_DECREASING"
+      },
+      {
+        "feature": "url_entropy",
+        "value": 4.177000045776367,
+        "shap_impact": -0.0384,
+        "direction": "RISK_DECREASING"
+      }
+    ],
+    "narrative_signals": [
+      "Domain length (+0.170)",
+      "Number of subdomains (+0.062)",
+      "Suspicious keyword count (+0.043)"
+    ],
+    "narrative_mitigators": [
+      "Query length (-0.059)",
+      "Url entropy (-0.038)"
+    ],
+    "recommendation": "Do not submit sensitive credentials or download files from this origin until verified."
+  },
+  {
+    "archetype": "4. User-info deception (@)",
+    "url": "http://admin:pass@verify-bank.com/account",
+    "raw_rf_probability": 0.1886,
+    "calibrated_probability": 0.0144,
+    "directive": "ALLOW",
+    "risk_level": "LOW",
+    "additive_residual": 0.0,
+    "is_additively_consistent": true,
+    "top_risk_contributors": [
+      {
+        "feature": "suspicious_keyword_count",
+        "value": 3.0,
+        "shap_impact": 0.0458,
+        "direction": "RISK_INCREASING"
+      },
+      {
+        "feature": "domain_entropy",
+        "value": 3.906899929046631,
+        "shap_impact": 0.0329,
+        "direction": "RISK_INCREASING"
+      },
+      {
+        "feature": "path_length",
+        "value": 8.0,
+        "shap_impact": 0.0245,
+        "direction": "RISK_INCREASING"
+      }
+    ],
+    "top_mitigating_factors": [
+      {
+        "feature": "number_of_digits",
+        "value": 0.0,
+        "shap_impact": -0.2505,
+        "direction": "RISK_DECREASING"
+      },
+      {
+        "feature": "number_of_slashes",
+        "value": 3.0,
+        "shap_impact": -0.0406,
+        "direction": "RISK_DECREASING"
+      }
+    ],
+    "narrative_signals": [
+      "Suspicious keyword count (+0.046)",
+      "Domain entropy (+0.033)",
+      "Path length (+0.025)"
+    ],
+    "narrative_mitigators": [
+      "Number of digits (-0.251)",
+      "Number of slashes (-0.041)"
+    ],
+    "recommendation": "URL conforms to expected benign web standards."
+  },
+  {
+    "archetype": "5. Punycode / IDN URL",
+    "url": "http://xn--gogle-pua.com/signin",
+    "raw_rf_probability": 0.05,
+    "calibrated_probability": 0.0022,
+    "directive": "ALLOW",
+    "risk_level": "LOW",
+    "additive_residual": 0.0,
+    "is_additively_consistent": true,
+    "top_risk_contributors": [
+      {
+        "feature": "path_length",
+        "value": 7.0,
+        "shap_impact": 0.0162,
+        "direction": "RISK_INCREASING"
+      },
+      {
+        "feature": "url_length",
+        "value": 31.0,
+        "shap_impact": 0.0085,
+        "direction": "RISK_INCREASING"
+      },
+      {
+        "feature": "number_of_special_characters",
+        "value": 0.0,
+        "shap_impact": 0.0007,
+        "direction": "RISK_INCREASING"
+      }
+    ],
+    "top_mitigating_factors": [
+      {
+        "feature": "number_of_digits",
+        "value": 0.0,
+        "shap_impact": -0.1843,
+        "direction": "RISK_DECREASING"
+      },
+      {
+        "feature": "domain_length",
+        "value": 17.0,
+        "shap_impact": -0.0845,
+        "direction": "RISK_DECREASING"
+      }
+    ],
+    "narrative_signals": [
+      "Path length (+0.016)",
+      "Url length (+0.009)",
+      "Number of special characters (+0.001)"
+    ],
+    "narrative_mitigators": [
+      "Number of digits (-0.184)",
+      "Domain length (-0.085)"
+    ],
+    "recommendation": "URL conforms to expected benign web standards."
+  },
+  {
+    "archetype": "6. Direct IP-based URL",
+    "url": "http://192.168.1.100:8080/login.html",
+    "raw_rf_probability": 0.6571,
+    "calibrated_probability": 0.902,
+    "directive": "BLOCK",
+    "risk_level": "HIGH",
+    "additive_residual": 0.0,
+    "is_additively_consistent": true,
+    "top_risk_contributors": [
+      {
+        "feature": "has_ip_address",
+        "value": 1.0,
+        "shap_impact": 0.0734,
+        "direction": "RISK_INCREASING"
+      },
+      {
+        "feature": "number_of_digits",
+        "value": 14.0,
+        "shap_impact": 0.0676,
+        "direction": "RISK_INCREASING"
+      },
+      {
+        "feature": "number_of_dots",
+        "value": 4.0,
+        "shap_impact": 0.059,
+        "direction": "RISK_INCREASING"
+      }
+    ],
+    "top_mitigating_factors": [
+      {
+        "feature": "query_length",
+        "value": 0.0,
+        "shap_impact": -0.0658,
+        "direction": "RISK_DECREASING"
+      },
+      {
+        "feature": "number_of_slashes",
+        "value": 3.0,
+        "shap_impact": -0.0405,
+        "direction": "RISK_DECREASING"
+      }
+    ],
+    "narrative_signals": [
+      "Has ip address (+0.073)",
+      "Number of digits (+0.068)",
+      "Number of dots (+0.059)"
+    ],
+    "narrative_mitigators": [
+      "Query length (-0.066)",
+      "Number of slashes (-0.041)"
+    ],
+    "recommendation": "Do not submit sensitive credentials or download files from this origin until verified."
+  },
+  {
+    "archetype": "7. Long URL + keywords",
+    "url": "http://update-account-verification-service.xyz/secure/login/verify.php?token=99281&auth=yes",
+    "raw_rf_probability": 0.35,
+    "calibrated_probability": 0.1186,
+    "directive": "ALLOW",
+    "risk_level": "LOW",
+    "additive_residual": 0.0,
+    "is_additively_consistent": true,
+    "top_risk_contributors": [
+      {
+        "feature": "domain_length",
+        "value": 39.0,
+        "shap_impact": 0.1806,
+        "direction": "RISK_INCREASING"
+      },
+      {
+        "feature": "suspicious_keyword_count",
+        "value": 6.0,
+        "shap_impact": 0.0463,
+        "direction": "RISK_INCREASING"
+      },
+      {
+        "feature": "number_of_digits",
+        "value": 5.0,
+        "shap_impact": 0.0285,
+        "direction": "RISK_INCREASING"
+      }
+    ],
+    "top_mitigating_factors": [
+      {
+        "feature": "query_length",
+        "value": 20.0,
+        "shap_impact": -0.1767,
+        "direction": "RISK_DECREASING"
+      },
+      {
+        "feature": "path_length",
+        "value": 24.0,
+        "shap_impact": -0.0946,
+        "direction": "RISK_DECREASING"
+      }
+    ],
+    "narrative_signals": [
+      "Domain length (+0.181)",
+      "Suspicious keyword count (+0.046)",
+      "Number of digits (+0.029)"
+    ],
+    "narrative_mitigators": [
+      "Query length (-0.177)",
+      "Path length (-0.095)"
+    ],
+    "recommendation": "URL conforms to expected benign web standards."
+  },
+  {
+    "archetype": "8. Unusual query parameters",
+    "url": "https://portal.bank-security.net/auth.php?param1=test&session_key=88941209&redirect=https://evil.com",
+    "raw_rf_probability": 0.11,
+    "calibrated_probability": 0.0049,
+    "directive": "ALLOW",
+    "risk_level": "LOW",
+    "additive_residual": 0.0,
+    "is_additively_consistent": true,
+    "top_risk_contributors": [
+      {
+        "feature": "suspicious_keyword_count",
+        "value": 3.0,
+        "shap_impact": 0.0597,
+        "direction": "RISK_INCREASING"
+      },
+      {
+        "feature": "number_of_dots",
+        "value": 4.0,
+        "shap_impact": 0.0392,
+        "direction": "RISK_INCREASING"
+      },
+      {
+        "feature": "path_length",
+        "value": 9.0,
+        "shap_impact": 0.0246,
+        "direction": "RISK_INCREASING"
+      }
+    ],
+    "top_mitigating_factors": [
+      {
+        "feature": "query_length",
+        "value": 58.0,
+        "shap_impact": -0.2215,
+        "direction": "RISK_DECREASING"
+      },
+      {
+        "feature": "number_of_equals",
+        "value": 3.0,
+        "shap_impact": -0.0916,
+        "direction": "RISK_DECREASING"
+      }
+    ],
+    "narrative_signals": [
+      "Suspicious keyword count (+0.060)",
+      "Number of dots (+0.039)",
+      "Path length (+0.025)"
+    ],
+    "narrative_mitigators": [
+      "Query length (-0.222)",
+      "Number of equals (-0.092)"
+    ],
+    "recommendation": "URL conforms to expected benign web standards."
+  },
+  {
+    "archetype": "9. Multiple subdomains",
+    "url": "https://login.secure.account.verification.chase.com.fraud-node-99.xyz/auth",
+    "raw_rf_probability": 0.53,
+    "calibrated_probability": 0.6157,
+    "directive": "CAUTION",
+    "risk_level": "MEDIUM",
+    "additive_residual": 0.0,
+    "is_additively_consistent": true,
+    "top_risk_contributors": [
+      {
+        "feature": "domain_length",
+        "value": 61.0,
+        "shap_impact": 0.1747,
+        "direction": "RISK_INCREASING"
+      },
+      {
+        "feature": "number_of_subdomains",
+        "value": 6.0,
+        "shap_impact": 0.0563,
+        "direction": "RISK_INCREASING"
+      },
+      {
+        "feature": "suspicious_keyword_count",
+        "value": 3.0,
+        "shap_impact": 0.0387,
+        "direction": "RISK_INCREASING"
+      }
+    ],
+    "top_mitigating_factors": [
+      {
+        "feature": "number_of_digits",
+        "value": 2.0,
+        "shap_impact": -0.1725,
+        "direction": "RISK_DECREASING"
+      },
+      {
+        "feature": "query_length",
+        "value": 0.0,
+        "shap_impact": -0.062,
+        "direction": "RISK_DECREASING"
+      }
+    ],
+    "narrative_signals": [
+      "Domain length (+0.175)",
+      "Number of subdomains (+0.056)",
+      "Suspicious keyword count (+0.039)"
+    ],
+    "narrative_mitigators": [
+      "Number of digits (-0.172)",
+      "Query length (-0.062)"
+    ],
+    "recommendation": "Exercise caution and verify domain spelling."
+  },
+  {
+    "archetype": "10. Short legitimate URL",
+    "url": "https://github.com",
+    "raw_rf_probability": 0.0,
+    "calibrated_probability": 0.0011,
+    "directive": "ALLOW",
+    "risk_level": "LOW",
+    "additive_residual": 0.0,
+    "is_additively_consistent": true,
+    "top_risk_contributors": [
+      {
+        "feature": "url_length",
+        "value": 19.0,
+        "shap_impact": 0.006,
+        "direction": "RISK_INCREASING"
+      },
+      {
+        "feature": "number_of_subdomains",
+        "value": 0.0,
+        "shap_impact": 0.0047,
+        "direction": "RISK_INCREASING"
+      },
+      {
+        "feature": "number_of_equals",
+        "value": 0.0,
+        "shap_impact": 0.0012,
+        "direction": "RISK_INCREASING"
+      }
+    ],
+    "top_mitigating_factors": [
+      {
+        "feature": "number_of_digits",
+        "value": 0.0,
+        "shap_impact": -0.2439,
+        "direction": "RISK_DECREASING"
+      },
+      {
+        "feature": "domain_entropy",
+        "value": 3.321899890899658,
+        "shap_impact": -0.0623,
+        "direction": "RISK_DECREASING"
+      }
+    ],
+    "narrative_signals": [
+      "Url length (+0.006)",
+      "Number of subdomains (+0.005)",
+      "Number of equals (+0.001)"
+    ],
+    "narrative_mitigators": [
+      "Number of digits (-0.244)",
+      "Domain entropy (-0.062)"
+    ],
+    "recommendation": "URL conforms to expected benign web standards."
+  }
+]

@@ -66,18 +66,18 @@ class ThresholdOptimizer:
 
     def get_validation_predictions(self, seed: int = 42) -> Tuple[np.ndarray, np.ndarray]:
         """Returns validation true labels and predicted phishing probabilities from domain-grouped split."""
-        X = self.df[self.feature_cols].values
+        X_df = self.df[self.feature_cols]
         y = self.df["label"].astype(int).values
         groups = self.df["domain"].values
 
         gss = GroupShuffleSplit(n_splits=1, test_size=0.20, random_state=seed)
-        _, val_idx = next(gss.split(X, y, groups=groups))
+        _, val_idx = next(gss.split(X_df, y, groups=groups))
 
-        X_val = X[val_idx]
+        X_val = X_df.iloc[val_idx]
         y_val = y[val_idx]
 
         if self.scaler is not None:
-            X_val = self.scaler.transform(X_val)
+            X_val = pd.DataFrame(self.scaler.transform(X_val), columns=self.feature_cols)
 
         y_proba = self.model.predict_proba(X_val)[:, 1]
         return y_val, y_proba

@@ -70,6 +70,7 @@ class ProductionPredictor:
         self.t1_low = float(thresholds.get("t1_low", 0.40))
         self.t2_high = float(thresholds.get("t2_high", 0.65))
         self.t_optimal = float(thresholds.get("t_optimal", 0.50))
+        self.calibrator = self.pkg.get("calibrator")
 
         # Invalidate cached explainer to bind to current weights
         self._explainer = None
@@ -114,9 +115,15 @@ class ProductionPredictor:
         else:
             X = pd.DataFrame(vector, columns=self.feature_names)
 
-        # 3. Model Inference
+        # 3. Model Inference (Calibrated Posterior vs Raw Voting Ratio)
         t_inf0 = time.perf_counter()
-        proba = float(self.model.predict_proba(X)[0, 1])
+        raw_proba = float(self.model.predict_proba(X)[0, 1])
+        if self.calibrator is not None:
+            proba = float(self.calibrator.predict_proba(X)[0, 1])
+            is_calibrated = True
+        else:
+            proba = raw_proba
+            is_calibrated = False
         model_time_ms = (time.perf_counter() - t_inf0) * 1000
 
         # 4. Calibrated Decision & Risk Classification
@@ -166,6 +173,8 @@ class ProductionPredictor:
             "metadata": {
                 "model_name": self.model_name,
                 "model_version": self.model_version,
+                "calibrated": is_calibrated,
+                "raw_probability": round(raw_proba, 4),
                 "feature_extraction_time_ms": round(feat_time_ms, 3),
                 "model_inference_time_ms": round(model_time_ms, 3),
                 "total_latency_ms": round(total_time_ms, 3)

@@ -40,6 +40,7 @@ class PhishingExplainer:
         feature_set = "improved" if len(self.feature_names) > 22 else "base"
         self.extractor = FeatureExtractor(feature_set=feature_set)
         self.thresholds = self.pkg.get("thresholds", {"t1_low": 0.40, "t2_high": 0.65, "t_optimal": 0.50})
+        self.calibrator = self.pkg.get("calibrator")
 
         # Initialize SHAP TreeExplainer
         # For RandomForest / Tree ensembles, TreeExplainer is exact and fast
@@ -52,10 +53,12 @@ class PhishingExplainer:
 
         df = pd.read_csv(self.features_csv)
         sample_df = df[self.feature_names].sample(min(sample_size, len(df)), random_state=42)
-        X_sample = sample_df.values
-
+        
         if self.scaler is not None:
-            X_sample = self.scaler.transform(X_sample)
+            X_scaled = self.scaler.transform(sample_df)
+            X_sample = pd.DataFrame(X_scaled, columns=self.feature_names)
+        else:
+            X_sample = sample_df.copy()
 
         shap_values = self.explainer.shap_values(X_sample)
 
@@ -92,14 +95,19 @@ class PhishingExplainer:
 
     def explain_vector(self, feature_vector: List[float], top_k: int = 5) -> Dict[str, Any]:
         """Generates local SHAP explanation for a given 22-dimensional feature vector."""
-        X = np.array(feature_vector, dtype=float).reshape(1, -1)
+        X_df = pd.DataFrame([feature_vector], columns=self.feature_names)
         if self.scaler is not None:
-            X = self.scaler.transform(X)
+            scaled = self.scaler.transform(X_df)
+            X_df = pd.DataFrame(scaled, columns=self.feature_names)
 
-        proba = float(self.model.predict_proba(X)[0, 1])
+        raw_proba = float(self.model.predict_proba(X_df)[0, 1])
+        if self.calibrator is not None:
+            proba = float(self.calibrator.predict_proba(X_df)[0, 1])
+        else:
+            proba = raw_proba
 
-        # SHAP attribution
-        shap_vals = self.explainer.shap_values(X)
+        # SHAP attribution (TreeExplainer operates on raw tree ensemble probabilities)
+        shap_vals = self.explainer.shap_values(X_df)
         if isinstance(shap_vals, list):
             sv = shap_vals[1][0]
         elif len(shap_vals.shape) == 3:
@@ -112,6 +120,11 @@ class PhishingExplainer:
             base_value = float(expected_val[1])
         else:
             base_value = float(expected_val)
+
+        # Verify SHAP additive consistency: base_value + sum(sv) == raw_proba
+        reconstructed_prob = base_value + float(np.sum(sv))
+        additive_residual = abs(reconstructed_prob - raw_proba)
+        is_additively_consistent = bool(additive_residual < 1e-3)
 
         attributions = []
         for name, raw_val, shap_val in zip(self.feature_names, feature_vector, sv):
@@ -141,18 +154,29 @@ class PhishingExplainer:
             risk_level = "HIGH"
             action = "BLOCK"
 
-        # Generate human-readable narrative
-        signals_summary = [
-            f"{c['feature'].replace('_', ' ').capitalize()} (+{c['shap_impact']:.3f})"
-            for c in pos_contributors[:3]
-        ]
-        mitigators_summary = [
-            f"{c['feature'].replace('_', ' ').capitalize()} ({c['shap_impact']:.3f})"
-            for c in neg_contributors[:2]
-        ]
+        # Generate human-readable narrative safely
+        if pos_contributors:
+            signals_summary = [
+                f"{c['feature'].replace('_', ' ').capitalize()} (+{c['shap_impact']:.3f})"
+                for c in pos_contributors[:3]
+            ]
+        else:
+            signals_summary = ["Zero anomalous risk indicators detected"]
+
+        if neg_contributors:
+            mitigators_summary = [
+                f"{c['feature'].replace('_', ' ').capitalize()} ({c['shap_impact']:.3f})"
+                for c in neg_contributors[:2]
+            ]
+        else:
+            mitigators_summary = ["Baseline attributes conform to standard web patterns"]
 
         return {
             "phishing_probability": round(proba, 4),
+            "raw_probability": round(raw_proba, 4),
+            "reconstructed_probability": round(reconstructed_prob, 4),
+            "additive_residual": float(round(additive_residual, 6)),
+            "is_additively_consistent": is_additively_consistent,
             "risk_level": risk_level,
             "action": action,
             "base_value": round(base_value, 4),
